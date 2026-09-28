@@ -1,6 +1,6 @@
 /* 02 · experience — career timeline */
 
-.experience { padding: 0; }
+.experience { padding: 0; } /* spacing lives on .exp-inner at every width */
 .exp-inner {
   min-height: 100vh;
   display: flex;
@@ -203,9 +203,4 @@
   .role-card { grid-area: auto; grid-template-columns: 1fr; gap: 16px; padding: 18px; }
   .role-side { gap: 16px; }
   .ring { width: 64px; height: 64px; }
-}
-
-/* small phones: same vertical rhythm as every other section */
-@media (max-width: 760px) {
-  .experience { padding: 110px 0; }
 }
