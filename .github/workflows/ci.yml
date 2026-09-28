@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: ./.github/actions/setup
 
@@ -36,7 +36,7 @@ jobs:
         run: npm run pdf -- --out dist/Nam_Nguyen_Nhat_CV.pdf
 
       - name: Upload CV preview
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cv-preview
           path: dist/Nam_Nguyen_Nhat_CV.pdf
