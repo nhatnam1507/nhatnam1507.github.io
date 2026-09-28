@@ -31,6 +31,10 @@ export const cv = {
         'Monitored production systems with Datadog and resolved issues to maintain system stability.',
       ],
       tags: ['gRPC', 'GraphQL', 'AWS', 'EKS', 'Lambda', 'GitHub Actions', 'Datadog'],
+      // portfolio-only fields: timeline label, one-line story, headline metric
+      label: 'Andpad',
+      highlight: 'gRPC and GraphQL services on AWS (ECS/EKS, Lambda), shipped through GitHub Actions and watched with Datadog.',
+      impact: { value: 'gRPC', label: 'service mesh between microservices' },
     },
     {
       role: 'Software Engineer',
@@ -47,6 +51,9 @@ export const cv = {
         'Refactored existing tests and added new test cases, raising code coverage above 90% and improving test quality.',
       ],
       tags: ['Go', 'OIDC / SSO', 'GCP Pub/Sub', 'IoT', 'Testify'],
+      label: 'Synapse ITS',
+      highlight: 'Provider-agnostic OIDC single sign-on, plus Go pipelines decoding IoT byte streams into Google Pub/Sub.',
+      impact: { value: '90%+', label: 'test coverage after refactor' },
     },
     {
       role: 'DevOps Engineer',
@@ -65,6 +72,9 @@ export const cv = {
         'Managed sprint planning and task delegation to keep delivery on schedule.',
       ],
       tags: ['CI/CD', 'Ansible', 'Kafka', 'ELK', 'Grafana', 'Prometheus', 'Okta'],
+      label: 'Data Dynamics',
+      highlight: 'CI/CD across projects, an Ansible platform installer, ELK + Grafana + Prometheus observability and Kafka messaging.',
+      impact: { value: 'CI/CD', label: 'pipelines standardised across projects' },
     },
     {
       role: 'Software Engineer',
@@ -80,6 +90,9 @@ export const cv = {
         'Built CI/CD pipelines for both the application and multiple MSSQL databases using Liquibase, automating deployment end to end.',
       ],
       tags: ['AKS', 'Kubernetes', 'Liquibase', 'MSSQL', 'Git'],
+      label: 'AllianceBernstein',
+      highlight: 'Led SVN → Git for multiple teams, lifted a legacy app from VMs to AKS and automated MSSQL releases with Liquibase.',
+      impact: { value: 'VM→K8s', label: 'lift-and-shift to AKS' },
     },
     {
       role: 'Software Engineer',
@@ -95,6 +108,9 @@ export const cv = {
         'Built the repository layer for a Go API backed by PostgreSQL, enabling reliable data access.',
       ],
       tags: ['Go', 'PostgreSQL', 'FHIR', 'Data migration'],
+      label: 'Welby',
+      highlight: 'Designed a FHIR-based healthcare schema and wrote Go migration tools that moved the data without loss.',
+      impact: { value: '0', label: 'records lost in migration' },
     },
     {
       role: 'Software Engineer',
@@ -108,6 +124,9 @@ export const cv = {
         'Built a proof-of-concept CI/CD pipeline deploying to AWS, demonstrating the value of automated deployments.',
       ],
       tags: ['C/C++', 'OCR', 'Java Spring', 'AWS'],
+      label: 'OCR engine',
+      highlight: 'Tuned a C/C++ OCR engine, exposed it through a Spring REST API and prototyped CI/CD to AWS.',
+      impact: { value: 'C++→API', label: 'engine served as a REST service' },
     },
     {
       role: 'Software Engineer',
@@ -121,6 +140,9 @@ export const cv = {
         'Developed unit test plans with GTest to validate system functionality.',
       ],
       tags: ['C/C++', 'SCADA', 'Multithreading', 'GTest'],
+      label: 'SCADA',
+      highlight: 'Kept an industrial SCADA server running reliably and sped it up with a C/C++ thread-pool redesign.',
+      impact: { value: '+20%', label: 'processing performance' },
     },
   ],
 

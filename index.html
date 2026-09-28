@@ -39,6 +39,7 @@
   <div class="fx-vignette" aria-hidden="true"></div>
   <div class="fx-noise" aria-hidden="true"></div>
   <div class="cursor" aria-hidden="true"><span></span></div>
+  <div class="curtain" aria-hidden="true"><span class="curtain-cmd"></span></div>
 
   <header class="nav">
     <a class="logo" href="#hero" data-scroll-to>
@@ -46,6 +47,7 @@
     </a>
     <nav class="nav-links" aria-label="Sections">
       <a href="#about" data-scroll-to><span>01</span>about</a>
+      <a href="#stats" data-scroll-to><span>02</span>metrics</a>
       <a href="#experience" data-scroll-to><span>03</span>experience</a>
       <a href="#stack" data-scroll-to><span>04</span>stack</a>
       <a href="#credentials" data-scroll-to><span>05</span>certs</a>
@@ -105,7 +107,7 @@
             <span>Export CV.pdf</span>
           </a>
           <a class="btn btn-ghost" href="#experience" data-scroll-to>
-            <span>git log --career</span>
+            <span>git log --graph</span>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" /></svg>
           </a>
         </div>
@@ -153,17 +155,23 @@
       </div>
     </section>
 
-    <!-- 03 EXPERIENCE: pinned horizontal track -->
+    <!-- 03 EXPERIENCE: pinned, scroll-scrubbed career timeline -->
     <section id="experience" class="section experience" data-label="experience">
-      <div class="exp-pin">
-        <div class="container exp-head">
-          <p class="kicker"><span>03</span> // experience</p>
-          <h2 class="h2">git log <span class="grad">--career</span></h2>
-          <div class="exp-progress"><span></span></div>
+      <div class="container exp-inner">
+        <div class="exp-head">
+          <div>
+            <p class="kicker"><span>03</span> // experience</p>
+            <h2 class="exp-title">git log <span class="grad">--graph</span></h2>
+          </div>
+          <div class="exp-side" aria-hidden="true">
+            <div class="exp-legend js-legend"></div>
+            <div class="exp-counter"><b class="js-exp-step">01</b> / <span class="js-exp-total">07</span></div>
+          </div>
         </div>
-        <div class="exp-viewport">
-          <ol class="exp-track js-exp-track"></ol>
-        </div>
+
+        <div class="tl js-timeline" aria-hidden="true"></div>
+
+        <div class="role js-role" aria-live="polite"></div>
       </div>
     </section>
 
