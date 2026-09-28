@@ -1,0 +1,57 @@
+# Runs on every pull request. Make "CV & site checks" a required status
+# check on main so an invalid CV can't be merged (see README → CI/CD).
+name: CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: CV & site checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup
+
+      - name: Validate CV source of truth (src/content/profile.js)
+        run: npm run validate
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Module preload list is up to date
+        run: node scripts/preload.mjs --check
+
+      - name: Render CV to PDF
+        run: npm run pdf -- --out dist/Nam_Nguyen_Nhat_CV.pdf
+
+      - name: Upload CV preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: cv-preview
+          path: dist/Nam_Nguyen_Nhat_CV.pdf
+          retention-days: 14
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### CV checks"
+            if [ -f dist/Nam_Nguyen_Nhat_CV.pdf ]; then
+              echo "✅ \`src/content/profile.js\` is valid and the PDF renders."
+              echo ""
+              echo "Download the **cv-preview** artifact from this run to review the exact PDF that will be published."
+            else
+              echo "❌ See the failed step above; validation errors are annotated on \`src/content/profile.js\`."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

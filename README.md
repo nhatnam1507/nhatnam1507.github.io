@@ -19,6 +19,7 @@ src/
     profile.js             the CV data: single source for the site and the PDF
   domain/
     career.js              pure rules: months, tenure, roles, stats, rolesUsing (no DOM, no libs)
+    profile-rules.js       validation rules for the CV source of truth (CI gate)
   shared/                  framework-agnostic UI kernel
     dom.js env.js lib.js   $/esc helpers, breakpoints, adapter for gsap/lenis globals
     motion.js text.js      pin ranges, live-while-visible loops, fit-to-viewport; text effects
@@ -39,8 +40,9 @@ src/
     <name>/content.js      section-specific copy/config (optional)
     <name>/widgets/        one module per interactive widget (optional)
   cv/                      print template feature (index.js, template.js, cv.css)
-tests/                     node --test suites for the pure domain layer
-scripts/                   build-pdf.mjs, preload.mjs
+tests/                     node --test suites (domain + CV rules) with a fixture profile
+scripts/                   build-pdf.mjs, validate-profile.mjs, preload.mjs
+.github/                   CI (pull requests) and Deploy (main → GitHub Pages) workflows
 ```
 
 ### Why it is shaped this way
@@ -70,15 +72,51 @@ scripts/                   build-pdf.mjs, preload.mjs
 
 ```sh
 npm run serve      # http://localhost:8080 (ES modules need http://, not file://)
-npm test           # domain unit tests
+npm run validate   # check src/content/profile.js against the CV rules
+npm test           # unit tests (domain + CV rules)
+npm run check      # validate + test + preload list check (what CI runs)
 npm run preload    # after adding/moving a module: refresh <link rel="modulepreload"> in index.html
-npm run pdf        # after editing src/content/profile.js: rebuild assets/cv/Nam_Nguyen_Nhat_CV.pdf
+npm run pdf        # optional local preview of the PDF (CI builds the published one)
 ```
 
 `npm run pdf` needs `npm install` and `npx playwright install chromium` the first time.
 
-To update the CV, edit `src/content/profile.js` and run `npm run pdf`. Both the site and the PDF read from that one file.
+## Updating the CV
+
+1. Edit `src/content/profile.js`. It is the only place CV facts live, and both the site and the PDF read from it.
+2. Open a pull request. The **CI** workflow validates the file, runs the tests and renders the PDF. Download the `cv-preview` artifact from the run to review the exact PDF.
+3. Merge. The **Deploy** workflow rebuilds the PDF from the merged source and publishes the site. You don't commit a PDF by hand.
+
+The rules in `src/domain/profile-rules.js` catch:
+- unknown or misspelled fields (e.g. `bulets`)
+- missing or empty text
+- dates that aren't `Mon YYYY` / `Present`
+- an end before its start, or a date in the future
+- experience that isn't ordered newest first
+- duplicate timeline labels
+- a `careerStart` that doesn't match the earliest role
+- a malformed email or profile link
+- limits that would break the layout (badge ≤ 4 chars, ≤ 8 tags, …)
+
+Errors are annotated on the offending line in the PR diff. If the CV grows past 2 pages, the build warns but doesn't fail.
+
+## CI/CD
+
+| workflow | runs on | does |
+|---|---|---|
+| `.github/workflows/ci.yml` | every pull request | validate CV → tests → preload check → render PDF → upload `cv-preview` |
+| `.github/workflows/deploy.yml` | push to `main` (and manual) | same checks → build PDF → publish the site to GitHub Pages |
+
+Both use the shared setup in `.github/actions/setup` (Node 22, `npm ci`, and the runner's Chrome for rendering).
+
+**One-time repository settings:**
+1. **Settings → Pages → Build and deployment → Source: GitHub Actions.** The Deploy workflow publishes the site, including the freshly built PDF.
+2. **Settings → Rules → Rulesets → New branch ruleset** targeting `main`:
+   - enable *Require a pull request before merging*
+   - enable *Require status checks to pass*, and add **CV & site checks**
+
+   Without this, CI still reports on PRs but can't block a merge.
 
 ## Deploying
 
-GitHub Pages serves this user site from the default branch root. In **Settings → Pages**, set the source to *Deploy from a branch* and choose `main` with `/ (root)`.
+Merging to `main` deploys automatically through `deploy.yml`, once Pages is set to the *GitHub Actions* source (see above). `assets/cv/Nam_Nguyen_Nhat_CV.pdf` in the repo is only a local copy; the published PDF is always rebuilt from `src/content/profile.js`.

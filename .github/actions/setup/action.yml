@@ -1,0 +1,29 @@
+name: Setup
+description: Node, dependencies and a Chromium for rendering the CV PDF.
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci --no-audit --no-fund
+      env:
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # use the runner's Chrome below
+
+    # GitHub-hosted Ubuntu runners ship Google Chrome; fall back to
+    # Playwright's Chromium if a runner image ever doesn't.
+    - name: Locate Chrome
+      shell: bash
+      run: |
+        chrome="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)"
+        if [ -n "$chrome" ]; then
+          echo "CHROMIUM_PATH=$chrome" >> "$GITHUB_ENV"
+          echo "Using $chrome ($("$chrome" --version))"
+        else
+          npx playwright install --with-deps chromium
+        fi

@@ -4,11 +4,16 @@
   "type": "module",
   "scripts": {
     "serve": "npx --yes http-server -p 8080 -c-1 .",
+    "validate": "node scripts/validate-profile.mjs",
     "test": "node --test \"tests/**/*.test.js\"",
+    "check": "npm run validate && npm test && node scripts/preload.mjs --check",
     "preload": "node scripts/preload.mjs",
     "pdf": "node scripts/build-pdf.mjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
