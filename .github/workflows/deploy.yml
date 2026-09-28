@@ -1,0 +1,58 @@
+# On every push to main: re-check the CV, build a fresh PDF from
+# src/content/profile.js and publish the site to GitHub Pages.
+# Requires Settings → Pages → Source: "GitHub Actions" (see README → CI/CD).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# one deployment at a time; never cancel one that is already publishing
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build site & CV
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ./.github/actions/setup
+
+      - name: Checks (CV validation, tests, preload list)
+        run: npm run check
+
+      - name: Render CV to PDF
+        run: npm run pdf # writes assets/cv/Nam_Nguyen_Nhat_CV.pdf
+
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp -r index.html cv.html .nojekyll assets src _site/
+          ls -la _site _site/assets/cv
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Publish to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { careerStats, employerOf, formatMonth, parseMonth, rolesUsing, tenure, toRoles, uptime } from '../src/domain/career.js';
-import { profile } from '../src/content/profile.js';
+import { fixtureProfile } from './fixtures/profile.js';
 
 const NOW = new Date('2026-09-28T12:00:00+07:00');
 
@@ -24,18 +24,17 @@ test('employerOf takes the first word of the company', () => {
 });
 
 test('toRoles sorts oldest first, shorter first on ties, keeps labels', () => {
-  const roles = toRoles(profile.experience, NOW);
-  assert.equal(roles[0].label, 'SCADA');
-  assert.equal(roles.at(-1).label, 'Andpad');
-  const [welby, ab] = roles.filter((r) => r.startLabel === 'Feb 2023');
-  assert.equal(welby.label, 'Welby'); // Feb–Aug 2023 ends before AllianceBernstein
-  assert.equal(ab.label, 'AllianceBernstein');
+  const roles = toRoles(fixtureProfile().experience, NOW);
+  assert.deepEqual(roles.map((r) => r.label), ['Gamma', 'Migration', 'Payments', 'Acme']);
+  assert.equal(roles[0].startLabel, 'Sep 2020');
+  assert.equal(roles.at(-1).endLabel, 'Present');
   assert.ok(roles.every((r) => r.months >= 1 && r.end >= r.start));
 });
 
 test('careerStats counts years, roles and employers', () => {
+  const profile = fixtureProfile();
   const roles = toRoles(profile.experience, NOW);
-  assert.deepEqual(careerStats(profile, roles, NOW), { years: 6, roles: 7, employers: 3 });
+  assert.deepEqual(careerStats(profile, roles, NOW), { years: 6, roles: 4, employers: 3 });
 });
 
 test('uptime is calendar based', () => {
@@ -46,7 +45,8 @@ test('uptime is calendar based', () => {
 });
 
 test('rolesUsing finds roles by tags and bullets', () => {
-  const roles = toRoles(profile.experience, NOW);
-  assert.deepEqual(rolesUsing(roles, /kubernetes|\baks\b|\beks\b/i), ['AllianceBernstein', 'Andpad']);
-  assert.deepEqual(rolesUsing(roles, /python/i), []);
+  const roles = toRoles(fixtureProfile().experience, NOW);
+  assert.deepEqual(rolesUsing(roles, /kubernetes|\beks\b/i), ['Acme']);
+  assert.deepEqual(rolesUsing(roles, /\bgo\b/i), ['Payments', 'Acme']);
+  assert.deepEqual(rolesUsing(roles, /haskell/i), []);
 });
