@@ -36,7 +36,7 @@ jobs:
         run: npm run pdf -- --out dist/Nam_Nguyen_Nhat_CV.pdf
 
       - name: Upload CV preview
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cv-preview
           path: dist/Nam_Nguyen_Nhat_CV.pdf
