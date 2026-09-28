@@ -38,31 +38,89 @@ function fillYears() {
   $('.js-year').textContent = new Date().getFullYear();
 }
 
+/* ---------- experience: timeline model ---------- */
+
+const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+const NOW = new Date();
+const NOW_M = NOW.getFullYear() * 12 + NOW.getMonth();
+const toMonth = (s) => {
+  if (/present/i.test(s)) return NOW_M;
+  const [m, y] = s.split(' ');
+  return Number(y) * 12 + MONTHS[m.slice(0, 3)];
+};
+const COMPANY_COLOR = { Toshiba: '#5aa9ff', Rikkeisoft: '#b18cff', Andpad: '#2ef2b0' };
+const companyKey = (c) => Object.keys(COMPANY_COLOR).find((k) => c.startsWith(k)) || 'Andpad';
+
+// oldest first so the playhead travels left → right through the career
+const JOBS = cv.experience
+  .map((j) => ({ ...j, s: toMonth(j.start), e: toMonth(j.end), key: companyKey(j.company) }))
+  .sort((a, b) => a.s - b.s || a.e - b.e);
+const T0 = Math.floor(JOBS[0].s / 12) * 12;
+const T1 = (NOW.getFullYear() + 1) * 12;
+const pct = (m) => ((m - T0) / (T1 - T0)) * 100;
+
+function tenure(months) {
+  const y = Math.floor(months / 12), m = months % 12;
+  return [y && `${y}y`, m && `${m}m`].filter(Boolean).join(' ') || '<1m';
+}
+
 function renderExperience() {
-  const track = $('.js-exp-track');
-  const cards = cv.experience.map((job, i) => {
-    const hash = shortHash(job.role + job.company + (job.project || '') + job.start);
-    return `
-      <li class="exp-card${i === 0 ? ' is-current' : ''}">
-        <div class="exp-meta">
-          <span class="exp-hash">${hash}</span>
-          <span class="exp-date">${esc(job.start)} → ${esc(job.end)}</span>
-          ${i === 0 ? '<span class="exp-head-tag">HEAD → main</span>' : ''}
+  const years = [];
+  for (let y = T0 / 12; y <= T1 / 12; y++) years.push(y);
+
+  const rows = JOBS.map(
+    (j, i) => `
+      <div class="tl-row" style="--c:${COMPANY_COLOR[j.key]}" data-i="${i}">
+        <div class="tl-label"><i></i>${esc(j.label)}</div>
+        <div class="tl-lane">
+          <span class="tl-ghost" style="left:${pct(j.s)}%;width:${pct(j.e) - pct(j.s)}%"></span>
+          <span class="tl-bar" style="left:${pct(j.s)}%;width:${pct(j.e) - pct(j.s)}%"></span>
+          <span class="tl-dot" style="left:${pct(j.s)}%"></span>
         </div>
-        <h3 class="exp-role">${esc(job.role)}</h3>
-        <div class="exp-company">@ ${esc(job.company)}${job.project ? ` · <b>${esc(job.project)}</b>` : ''}</div>
-        <ul class="exp-bullets">${job.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>
-        <div class="chips">${job.tags.map((t) => `<span class="chip">${esc(t)}</span>`).join('')}</div>
-      </li>`;
-  });
-  const edu = cv.education[0];
-  cards.push(`
-    <li class="exp-card exp-end">
-      <span>$ git log --reverse | head -1</span>
-      <strong>initial commit</strong>
-      <span>${esc(edu.degree)}<br>${esc(edu.school)} · ${esc(edu.start)} – ${esc(edu.end)}</span>
-    </li>`);
-  track.innerHTML = cards.join('');
+      </div>`
+  ).join('');
+
+  $('.js-timeline').innerHTML = `
+    <div class="tl-row tl-axis">
+      <div class="tl-label"></div>
+      <div class="tl-lane">${years.map((y) => `<span class="tl-year" style="left:${pct(y * 12)}%">${y}</span>`).join('')}</div>
+    </div>
+    ${rows}
+    <div class="tl-over"><div class="tl-playhead"><span class="tl-date"></span></div></div>`;
+
+  const RING = 2 * Math.PI * 30;
+  $('.js-role').innerHTML = JOBS.map((j, i) => {
+    const months = Math.max(1, j.e - j.s);
+    const head = i === JOBS.length - 1;
+    const hash = shortHash(j.role + j.company + (j.project || '') + j.start);
+    return `
+      <article class="role-card" style="--c:${COMPANY_COLOR[j.key]}">
+        <div class="role-main">
+          <div class="role-meta">
+            <span class="role-hash">${hash}</span>
+            <span>${esc(j.start)} → ${esc(j.end)}</span>
+            ${head ? '<span class="role-head">HEAD → main</span>' : ''}
+          </div>
+          <h3 class="role-title">${esc(j.role)}</h3>
+          <div class="role-company">@ ${esc(j.company)}${j.project ? ` · <b>${esc(j.project)}</b>` : ''}</div>
+          <p class="role-hl">${esc(j.highlight)}</p>
+          <div class="chips">${j.tags.map((t, k) => `<span class="chip" style="--k:${k}">${esc(t)}</span>`).join('')}</div>
+        </div>
+        <div class="role-side">
+          <div class="ring">
+            <svg viewBox="0 0 72 72"><circle class="ring-bg" cx="36" cy="36" r="30"/><circle class="ring-fg" cx="36" cy="36" r="30"
+              style="stroke-dasharray:${RING};--off:${RING * (1 - Math.min(1, months / 24))};--full:${RING}"/></svg>
+            <span>${tenure(months)}</span>
+          </div>
+          <div class="impact">
+            <b>${esc(j.impact.value)}</b>
+            <small>${esc(j.impact.label)}</small>
+          </div>
+        </div>
+      </article>`;
+  }).join('');
+  $('.js-legend').innerHTML = Object.entries(COMPANY_COLOR).map(([k, c]) => `<span style="--c:${c}"><i></i>${k}</span>`).join('');
+  $('.js-exp-total').textContent = String(JOBS.length).padStart(2, '0');
 }
 
 function renderStack() {
@@ -324,14 +382,39 @@ function setupSmoothScroll() {
   return lenis;
 }
 
-function setupAnchors(lenis) {
+// Nav jumps: instead of smooth-scrolling through every pinned/scrubbed section
+// in between (which replays all of them at once and stutters), a curtain wipes
+// in, the page jumps instantly underneath it, and the curtain wipes out.
+function setupAnchors(lenis, scene) {
+  const curtain = $('.curtain');
+  const cmd = $('.curtain-cmd');
+  let busy = false;
+
+  const jump = (target) => {
+    // land on the pin start for pinned sections
+    const el = target.parentElement?.classList.contains('pin-spacer') ? target.parentElement : target;
+    const y = el.getBoundingClientRect().top + scrollY;
+    if (lenis) lenis.scrollTo(y, { immediate: true, force: true });
+    else window.scrollTo(0, y);
+    ScrollTrigger.update();
+    scene?.snap();
+  };
+
   $$('[data-scroll-to]').forEach((a) => {
     a.addEventListener('click', (e) => {
       const target = $(a.getAttribute('href'));
       if (!target) return;
       e.preventDefault();
-      if (lenis) lenis.scrollTo(target, { duration: 1.6, easing: (t) => 1 - Math.pow(1 - t, 4) });
-      else target.scrollIntoView();
+      if (reducedMotion) { jump(target); return; }
+      if (busy) return;
+      busy = true;
+      cmd.textContent = `cd ~/${target.id === 'hero' ? '' : target.id}`;
+      gsap.timeline({ onComplete: () => { busy = false; } })
+        .set(curtain, { visibility: 'visible', yPercent: 100 })
+        .to(curtain, { yPercent: 0, duration: 0.38, ease: 'power3.in' })
+        .call(() => jump(target))
+        .to(curtain, { yPercent: -100, duration: 0.5, ease: 'power3.out', delay: 0.14 })
+        .set(curtain, { visibility: 'hidden' });
     });
   });
 }
@@ -353,6 +436,7 @@ function setupAbout() {
   const el = $('.js-words');
   const words = splitReading(el);
   if (reducedMotion) { words.forEach((w) => w.classList.add('lit')); return; }
+  let lit = 0;
   ScrollTrigger.create({
     trigger: '#about',
     start: 'top top',
@@ -360,54 +444,87 @@ function setupAbout() {
     pin: true,
     scrub: true,
     onUpdate(self) {
-      const lit = Math.round(self.progress * words.length * 1.08);
-      words.forEach((w, i) => w.classList.toggle('lit', i < lit));
+      const next = Math.min(words.length, Math.round(self.progress * words.length * 1.08));
+      if (next === lit) return;
+      const [a, b, on] = next > lit ? [lit, next, true] : [next, lit, false];
+      for (let i = a; i < b; i++) words[i].classList.toggle('lit', on);
+      lit = next;
     },
   });
 }
 
+// Pinned timeline: scrolling moves a playhead through time, bars draw in
+// behind it and the matching role card swaps in. Only transforms/classes are
+// written per update, and only when they change.
 function setupExperience() {
   const section = $('#experience');
-  const track = $('.js-exp-track');
-  const cards = $$('.exp-card', track);
-  const bar = $('.exp-progress span');
-  const mm = gsap.matchMedia();
+  const rows = $$('.tl-row[data-i]');
+  const bars = rows.map((r) => $('.tl-bar', r));
+  const playhead = $('.tl-playhead');
+  const dateEl = $('.tl-date');
+  const cards = $$('.role-card');
+  const stepEl = $('.js-exp-step');
+  const N = JOBS.length;
+  let active = -1;
+  let lastDate = '';
 
+  const setActive = (i) => {
+    if (i === active) return;
+    active = i;
+    rows.forEach((r, k) => { r.classList.toggle('is-active', k === i); r.classList.toggle('is-past', k < i); });
+    cards.forEach((c, k) => c.classList.toggle('is-active', k === i));
+    stepEl.textContent = String(i + 1).padStart(2, '0');
+  };
+
+  const render = (p) => {
+    const step = Math.min(N - 1, Math.floor(p * N));
+    const frac = Math.min(1, p * N - step);
+    const from = JOBS[step].s;
+    const to = step < N - 1 ? JOBS[step + 1].s : NOW_M;
+    const t = from + (to - from) * frac;
+    playhead.style.transform = `translate3d(${pct(t)}%,0,0)`;
+    const m = Math.round(t);
+    const label = `${Math.floor(m / 12)}.${String((m % 12) + 1).padStart(2, '0')}`;
+    if (label !== lastDate) { dateEl.textContent = label; lastDate = label; }
+    JOBS.forEach((j, k) => {
+      const v = Math.min(1, Math.max(0, (t - j.s) / Math.max(1, j.e - j.s)));
+      bars[k].style.transform = `scaleX(${v})`;
+    });
+    setActive(step);
+  };
+
+  const mm = gsap.matchMedia();
   mm.add('(min-width: 900px)', () => {
-    const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
-    const tween = gsap.to(track, {
-      x: () => -distance(),
+    section.classList.remove('is-static');
+    const proxy = { p: 0 };
+    render(0);
+    const tween = gsap.to(proxy, {
+      p: 1,
       ease: 'none',
+      onUpdate: () => render(proxy.p),
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: () => `+=${distance()}`,
+        end: () => `+=${innerHeight * N * 0.5}`,
         pin: true,
-        scrub: 0.8,
+        scrub: 0.5,
         invalidateOnRefresh: true,
-        onUpdate(self) {
-          bar.style.transform = `scaleX(${self.progress})`;
-          const idx = Math.min(cards.length - 1, Math.round(self.progress * (cards.length - 1)));
-          cards.forEach((c, i) => c.classList.toggle('is-current', i === idx));
-        },
       },
     });
-    cards.forEach((card) => {
-      gsap.from(card, {
-        opacity: 0.2,
-        y: 60,
-        rotateZ: 2,
-        ease: 'power2.out',
-        scrollTrigger: { trigger: card, containerAnimation: tween, start: 'left 100%', end: 'left 65%', scrub: true },
-      });
-    });
-    return () => gsap.set(track, { clearProps: 'transform' });
+    return () => tween.kill();
   });
 
+  // phones: no pin — fully drawn chart, every role listed, animate on enter
   mm.add('(max-width: 899px)', () => {
-    cards.forEach((card) => {
-      gsap.from(card, { opacity: 0, y: 50, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: card, start: 'top 88%' } });
+    section.classList.add('is-static');
+    playhead.style.transform = `translate3d(${pct(NOW_M)}%,0,0)`;
+    dateEl.textContent = 'now';
+    // cards animate via their CSS transition when they get .is-active
+    gsap.fromTo(bars, { scaleX: 0 }, {
+      scaleX: 1, duration: 1.2, ease: 'power3.out', stagger: 0.08,
+      scrollTrigger: { trigger: '.js-timeline', start: 'top 85%' },
     });
+    cards.forEach((c) => ScrollTrigger.create({ trigger: c, start: 'top 92%', once: true, onEnter: () => c.classList.add('is-active') }));
   });
 }
 
@@ -519,10 +636,12 @@ function setupCursor() {
   });
 }
 
-// scene progress, HUD, nav — computed every frame from section rects so it stays
-// correct regardless of pinning
+// Scene progress, HUD and nav state. Section offsets are measured once per
+// ScrollTrigger refresh (pinned sections via their pin-spacer), so the
+// per-frame work is arithmetic on scrollY with no layout reads, and the DOM
+// is only written when a value actually changes.
 function setupTracking(scene) {
-  const sections = $$('main .section'); // pinned sections get wrapped in a pin-spacer
+  const sections = $$('main .section');
   const nav = $('.nav');
   const navLinks = $$('.nav-links a');
   const hudNum = $('.hud-num');
@@ -534,42 +653,57 @@ function setupTracking(scene) {
   const hudFps = $('.hud-fps');
   $('.hud-total').textContent = String(sections.length - 1).padStart(2, '0');
 
-  let pointerX = 0, pointerY = 0;
+  let tops = [], maxScroll = 1;
+  const measure = () => {
+    const y = scrollY;
+    tops = sections.map((sec) => {
+      const el = sec.parentElement.classList.contains('pin-spacer') ? sec.parentElement : sec;
+      return el.getBoundingClientRect().top + y;
+    });
+    maxScroll = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+  };
+  ScrollTrigger.addEventListener('refresh', measure);
+  measure();
+
+  const fmt = (v) => (v >= 0 ? '+' : '-') + Math.abs(v).toFixed(3);
+  let coordsDirty = false, px = 0, py = 0;
   window.addEventListener('pointermove', (e) => {
-    pointerX = (e.clientX / innerWidth) * 2 - 1;
-    pointerY = -(e.clientY / innerHeight) * 2 + 1;
+    px = (e.clientX / innerWidth) * 2 - 1;
+    py = -(e.clientY / innerHeight) * 2 + 1;
+    coordsDirty = true;
   });
 
-  let active = -1, frames = 0, last = performance.now();
+  let active = -1, lastPct = -1, scrolled = null, frames = 0, last = performance.now();
   gsap.ticker.add(() => {
+    const y = scrollY;
     const vh = innerHeight;
-    let s = 0;
-    let current = 0;
-    sections.forEach((sec, i) => {
-      const top = sec.getBoundingClientRect().top;
+    let s = 0, current = 0;
+    for (let i = 0; i < tops.length; i++) {
+      const top = tops[i] - y;
       if (i > 0) s += Math.min(1, Math.max(0, (vh - top) / (vh * 0.8)));
       if (top <= vh * 0.5) current = i;
-    });
+    }
     scene?.setProgress(s);
 
     if (current !== active) {
       active = current;
-      const label = sections[active].dataset.label;
       hudNum.textContent = String(active).padStart(2, '0');
-      hudLabel.textContent = label;
+      hudLabel.textContent = sections[active].dataset.label;
       hudShape.textContent = `mesh: ${SHAPES[Math.min(active, SHAPES.length - 1)].name}`;
       const id = sections[active].id;
       navLinks.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${id}`));
     }
 
-    const max = document.documentElement.scrollHeight - vh;
-    const pct = max > 0 ? scrollY / max : 0;
-    hudFill.style.transform = `scaleY(${pct})`;
-    hudPct.textContent = `${String(Math.round(pct * 100)).padStart(3, '0')}%`;
-    nav.classList.toggle('is-scrolled', scrollY > 40);
+    const p = Math.round((y / maxScroll) * 1000) / 1000;
+    if (p !== lastPct) {
+      lastPct = p;
+      hudFill.style.transform = `scaleY(${p})`;
+      hudPct.textContent = `${String(Math.round(p * 100)).padStart(3, '0')}%`;
+    }
+    const sc = y > 40;
+    if (sc !== scrolled) { scrolled = sc; nav.classList.toggle('is-scrolled', sc); }
 
-    const f = (v) => (v >= 0 ? '+' : '-') + Math.abs(v).toFixed(3);
-    hudCoords.textContent = `x:${f(pointerX)} y:${f(pointerY)}`;
+    if (coordsDirty) { coordsDirty = false; hudCoords.textContent = `x:${fmt(px)} y:${fmt(py)}`; }
 
     frames++;
     const now = performance.now();
@@ -620,7 +754,7 @@ async function init() {
 
   const lenis = setupSmoothScroll();
   lenis?.stop();
-  setupAnchors(lenis);
+  setupAnchors(lenis, scene);
   setupAbout();
   setupExperience();
   setupReveals();

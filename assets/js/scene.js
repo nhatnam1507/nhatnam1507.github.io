@@ -248,10 +248,12 @@ const fragment = /* glsl */ `
 
 export function createScene(canvas, { reducedMotion = false } = {}) {
   const isMobile = matchMedia('(max-width: 760px)').matches;
-  const COUNT = isMobile ? 5500 : 11000;
+  const COUNT = isMobile ? 4500 : 9000;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  // Soft additive points gain nothing visible from a 2x backbuffer, so cap
+  // the pixel ratio; adaptive quality below lowers it further if needed.
+  let dpr = Math.min(window.devicePixelRatio || 1, 1.5);
   renderer.setPixelRatio(dpr);
   renderer.setClearColor(0x000000, 0);
 
@@ -367,13 +369,39 @@ export function createScene(canvas, { reducedMotion = false } = {}) {
   const lerp = (a, b, t) => a + (b - a) * t;
   const clock = new THREE.Clock();
   let running = true;
+  let snapFrames = 0;
+
+  // Adaptive quality: if frames stay slow for ~2s, step down resolution and
+  // then particle count, so weaker GPUs keep scrolling smooth.
+  const quality = { level: 0, slow: 0, sampled: 0 };
+  function adapt(rawDt) {
+    if (quality.level >= 2 || document.hidden) return;
+    quality.sampled++;
+    if (rawDt > 1 / 45) quality.slow++;
+    if (quality.sampled < 120) return;
+    if (quality.slow / quality.sampled > 0.5) {
+      quality.level++;
+      if (quality.level === 1) {
+        dpr = 1;
+        renderer.setPixelRatio(dpr);
+        uniforms.uPixelRatio.value = dpr;
+        resize();
+      } else {
+        geo.setDrawRange(0, Math.floor(COUNT * 0.6));
+      }
+    }
+    quality.sampled = quality.slow = 0;
+  }
 
   function frame() {
     if (!running) return;
-    const dt = Math.min(clock.getDelta(), 0.05);
+    const rawDt = clock.getDelta();
+    const dt = Math.min(rawDt, 0.05);
     const t = clock.elapsedTime;
     uniforms.uTime.value = t;
+    adapt(rawDt);
 
+    if (snapFrames > 0) { snapFrames--; current = target; }
     current = reducedMotion ? target : lerp(current, target, 1 - Math.pow(0.001, dt));
     const max = SHAPES.length - 1;
     const c = Math.min(Math.max(current, 0), max);
@@ -431,6 +459,8 @@ export function createScene(canvas, { reducedMotion = false } = {}) {
   return {
     /** p is a float index into SHAPES (0 .. SHAPES.length - 1) */
     setProgress(p) { target = p; },
+    /** jump straight to the current target (used behind the nav curtain) */
+    snap() { snapFrames = 3; },
     count: SHAPES.length,
   };
 }
