@@ -44,7 +44,7 @@ export const profile = {
       start: 'May 2025',
       end: 'Feb 2026',
       bullets: [
-        'Implemented OIDC-based single sign-on across multiple identity providers (Okta, Keycloak, Google, Facebook).',
+        'Implemented OIDC-based single sign-on across multiple identity providers (Okta, Keycloak, Google, Microsoft).',
         'Developed Go services to route data from a high-volume IoT device fleet into Google Cloud Pub/Sub.',
         'Developed Go parsers to decode IoT byte-stream data, improving processing accuracy and scalability.',
         'Developed unit tests with Go’s testing package and Testify, catching bugs early in development.',
@@ -52,7 +52,7 @@ export const profile = {
       ],
       tags: ['Go', 'Multi-IdP SSO', 'GCP Pub/Sub', 'IoT', 'Testify'],
       label: 'Synapse ITS',
-      highlight: 'OIDC single sign-on across Okta, Keycloak, Google and Facebook, plus Go pipelines streaming IoT data into Pub/Sub.',
+      highlight: 'OIDC single sign-on across Okta, Keycloak, Google and Microsoft, plus Go pipelines streaming IoT data into Pub/Sub.',
       impact: { value: '90%+', label: 'test coverage after refactor' },
     },
     {

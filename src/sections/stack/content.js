@@ -11,7 +11,7 @@ export const BOXES = {
   },
   idp: {
     title: 'identity', sub: 'provider',
-    items: [['Okta', 'used', /okta/i], ['Keycloak', 'used', /keycloak/i], ['Google', 'used', /google(?! cloud)/i], ['Facebook', 'used', /facebook/i]],
+    items: [['Okta', 'used', /okta/i], ['Keycloak', 'used', /keycloak/i], ['Google', 'used', /google(?! cloud)/i], ['Microsoft', 'used', /microsoft/i]],
   },
   svc: {
     title: 'services', sub: 'written in',
@@ -58,7 +58,7 @@ export const STEPS = [
   '$ go build ./services/...',
   '$ migrate up · kafka topics created',
   '$ expose grpc · graphql · rest',
-  '$ idp up: okta · keycloak · google · facebook',
+  '$ idp up: okta · keycloak · google · microsoft',
   '$ gh workflow run pipeline',
   '$ curl /healthz → 200 · all green ✓',
 ];
