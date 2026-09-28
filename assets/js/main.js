@@ -1,6 +1,7 @@
 import { cv, yearsOfExperience } from './data.js';
 import { createScene, SHAPES } from './scene.js';
 import { setupAbout } from './about.js';
+import { setupStack } from './stack.js';
 
 const { gsap, ScrollTrigger, Lenis } = window;
 gsap.registerPlugin(ScrollTrigger);
@@ -124,43 +125,10 @@ function renderExperience() {
   $('.js-exp-total').textContent = String(JOBS.length).padStart(2, '0');
 }
 
-function renderStack() {
-  const groups = $('.js-skill-groups');
-  const CORE = new Set(['Go', 'PostgreSQL', 'Docker', 'Kubernetes', 'Helm', 'CI/CD', 'Git']);
-  const isCore = (s) => CORE.has(s);
-  groups.innerHTML = cv.skills.groups
-    .map(
-      (g) => `
-      <div class="skill-group">
-        <h3>${esc(g.label)}</h3>
-        <div class="chips">${g.items.map((s) => `<span class="chip${isCore(s) ? ' core' : ''}">${esc(s)}</span>`).join('')}</div>
-      </div>`
-    )
-    .join('');
-
+function renderMarquee() {
   const all = [...new Set(cv.skills.groups.flatMap((g) => g.items))];
   const row = all.map((s) => `<span>${esc(s)}</span><i>✦</i>`).join('');
   $('.js-marquee').innerHTML = row + row;
-}
-
-function yamlTokens() {
-  const T = [];
-  const push = (cls, text) => T.push([cls, text]);
-  const key = (k, indent = '') => { push('', indent); push('k', k); push('', ':'); };
-  push('c', '# stack.yaml — curated by nam@dev\n');
-  key('engineer'); push('s', ` "${cv.name}"`); push('', '\n');
-  key('experience'); push('s', ` "${YEARS}+ years"`); push('', '\n');
-  key('core'); push('', '\n');
-  cv.skills.core.forEach((s) => { push('', '  - '); push('s', s); push('', '\n'); });
-  key('cloud'); push('', '\n');
-  key('aws', '  '); push('', ' [EC2, ECS, EKS, Lambda, S3, RDS]\n');
-  key('gcp', '  '); push('', ' [Pub/Sub]\n');
-  key('azure', '  '); push('', ' [AKS]\n');
-  key('observability'); push('', ' [Datadog, ELK, Grafana, Prometheus]\n');
-  key('exploring'); push('', '\n');
-  cv.skills.exploring.forEach((s) => { push('', '  - '); push('s', s); push('', '\n'); });
-  key('certified'); push('', ' '); push('p', 'true'); push('c', '  # AWS SAA + CCP\n');
-  return T;
 }
 
 function renderCredentials() {
@@ -256,28 +224,6 @@ function typeTerminal(el) {
     }
     step();
   });
-}
-
-function typeTokens(el, tokens, charsPerFrame = 3) {
-  const total = tokens.reduce((n, [, t]) => n + t.length, 0);
-  const renderUpTo = (n) => {
-    let out = '', left = n;
-    for (const [cls, text] of tokens) {
-      if (left <= 0) break;
-      const part = text.slice(0, left);
-      left -= part.length;
-      out += cls ? `<span class="${cls}">${esc(part)}</span>` : esc(part);
-    }
-    el.innerHTML = out + '<span class="cur"></span>';
-  };
-  if (reducedMotion) { renderUpTo(total); return; }
-  let n = 0;
-  const tick = () => {
-    n = Math.min(total, n + charsPerFrame);
-    renderUpTo(n);
-    if (n < total) requestAnimationFrame(tick);
-  };
-  tick();
 }
 
 // wrap words of headings so each can slide up from a mask
@@ -503,18 +449,6 @@ function setupReveals() {
     gsap.from(el, { opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
   });
 
-  // stack
-  let typed = false;
-  ScrollTrigger.create({
-    trigger: '.term-stack',
-    start: 'top 75%',
-    onEnter() { if (!typed) { typed = true; typeTokens($('.js-yaml'), yamlTokens(), 4); } },
-  });
-  gsap.from('.skill-group', {
-    opacity: 0, y: 40, duration: 0.8, ease: 'power3.out', stagger: 0.07,
-    scrollTrigger: { trigger: '.skill-groups', start: 'top 80%' },
-  });
-
   // certs
   gsap.from('.cert-wrap', {
     opacity: 0, y: 80, rotateX: -25, duration: 1.1, ease: 'expo.out', stagger: 0.12,
@@ -571,7 +505,7 @@ function setupCursor() {
   });
   document.addEventListener('pointerleave', () => c.classList.remove('is-visible'));
   document.addEventListener('pointerover', (e) => {
-    c.classList.toggle('is-hover', !!e.target.closest('a, button, .cert, .skill-group'));
+    c.classList.toggle('is-hover', !!e.target.closest('a, button, .cert, .an, .ci-stage'));
   });
 }
 
@@ -679,7 +613,7 @@ function setupExport() {
 async function init() {
   fillYears();
   renderExperience();
-  renderStack();
+  renderMarquee();
   renderCredentials();
   renderContact();
 
@@ -696,6 +630,7 @@ async function init() {
   setupAnchors(lenis, scene);
   setupAbout({ gsap, ScrollTrigger, years: YEARS, careerStart: cv.careerStart, reducedMotion });
   setupExperience();
+  setupStack({ gsap, ScrollTrigger, jobs: JOBS, reducedMotion }); // after experience: pins must be created in page order
   setupReveals();
   setupTilt();
   setupCursor();
