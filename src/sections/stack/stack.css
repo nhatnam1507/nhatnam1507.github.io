@@ -59,6 +59,9 @@
 .ab-idp { grid-area: idp; align-self: stretch; border-color: rgba(255, 122, 198, 0.35); }
 .ab-idp .ab-h > span { color: #ff7ac6; }
 .ab-idp .ab-nodes { flex-direction: row; }
+.ab-row { display: grid; grid-template-columns: 74px 1fr; align-items: center; gap: 10px; }
+.ab-row + .ab-row { margin-top: 6px; }
+.ab-row small { font-family: var(--mono); font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.1em; }
 .ab-plat { grid-area: plat; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px 20px; }
 .ab-plat .ab-h { margin: 0; }
 
@@ -202,6 +205,7 @@
   .arch-board { grid-template-columns: 1fr; grid-template-areas: 'ci' 'api' 'idp' 'svc' 'data' 'obs' 'plat'; row-gap: 12px; }
   .arch-wires, .ab-client { display: none; }
   .ab-nodes { flex-direction: row; flex-wrap: wrap; }
+  .ab-row { grid-template-columns: 84px 1fr; }
   .ci { flex-wrap: wrap; }
   .ci-stage { flex: 1 1 40%; }
   .ci-arrow { display: none; }

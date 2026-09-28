@@ -19,7 +19,7 @@ import { boot } from './app/boot.js';
 
 function createContext(now = new Date()) {
   const roles = toRoles(profile.experience, now);
-  return { profile, roles, stats: careerStats(profile, roles, now), now, env };
+  return { profile, roles, stats: careerStats(profile, roles, now), now, env, scene: null };
 }
 
 function tryCreateScene() {
@@ -40,6 +40,7 @@ async function start() {
   renderPage($('#app'), blocks, ctx);
 
   const scene = tryCreateScene();
+  ctx.scene = scene; // sections may lock overlays onto it (null without WebGL)
   const lenis = createSmoothScroll(env);
   lenis?.stop();
 

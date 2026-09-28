@@ -1,6 +1,7 @@
 // The architecture diagram's configuration. Each tool is
-// [name, level, pattern]; `pattern` is matched against the experience data
-// to find which roles used it (see domain rolesUsing).
+// [name, level, pattern, row?]; `pattern` is matched against the experience
+// data to find which roles used it (see domain rolesUsing). Tools with a `row`
+// are grouped under that label inside their box.
 
 export const LEVELS = { core: 'core skill', used: 'in production', explore: 'currently exploring' };
 
@@ -10,8 +11,15 @@ export const BOXES = {
     items: [['gRPC', 'used', /grpc/i], ['GraphQL', 'used', /graphql/i], ['REST', 'used', /\brest\b/i]],
   },
   idp: {
-    title: 'identity', sub: 'authN · authZ · SSO by',
-    items: [['Okta', 'used', /okta/i], ['OIDC', 'used', /oidc/i], ['SSO', 'used', /single sign-on|\bsso\b/i]],
+    // Okta is the identity provider; OIDC and SSO are the sign-in mechanisms,
+    // both built on OAuth 2.0
+    title: 'identity', sub: 'sign-in handled by',
+    items: [
+      ['Okta', 'used', /okta/i, 'provider'],
+      ['OIDC', 'used', /oidc/i, 'mechanism'],
+      ['SSO', 'used', /single sign-on|\bsso\b/i, 'mechanism'],
+      ['OAuth 2.0', 'used', /oauth|oidc/i, 'built on'],
+    ],
   },
   svc: {
     title: 'services', sub: 'written in',
@@ -58,7 +66,7 @@ export const STEPS = [
   '$ go build ./services/...',
   '$ migrate up · kafka topics created',
   '$ expose grpc · graphql · rest',
-  '$ okta: oidc client registered · sso on',
+  '$ okta: register oidc app · sso on',
   '$ gh workflow run pipeline',
   '$ curl /healthz → 200 · all green ✓',
 ];

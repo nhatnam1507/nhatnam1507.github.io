@@ -9,7 +9,9 @@ const TAU = Math.PI * 2;
 
 /* ---------- shape generators: each returns Float32Array(count * 3) ---------- */
 
-function sphere(n, r = 1.9) {
+const CORE_RADIUS = 1.9;
+
+function sphere(n, r = CORE_RADIUS) {
   const out = new Float32Array(n * 3);
   const golden = Math.PI * (3 - Math.sqrt(5));
   for (let i = 0; i < n; i++) {
@@ -145,9 +147,10 @@ function portal(n) {
 }
 
 /* ---------- per-shape placement so the object never fights the copy ---------- */
-// x/y offset (in world units at z=0), scale, tilt and overall opacity per section
+// x/y offset (in world units at z=0), scale, tilt and overall opacity per section;
+// r = bounding radius, for shapes that HUD overlays lock onto
 const PLACEMENT = [
-  { name: 'core',    gen: sphere,    x: 2.5,  y: 0,    s: 1.0,  tilt: 0.25, o: 1.0 },
+  { name: 'core',    gen: sphere,    x: 2.5,  y: 0,    s: 1.0,  tilt: 0.25, o: 1.0, r: CORE_RADIUS },
   { name: 'helix',   gen: helix,     x: 0,    y: 0,    s: 1.1,  tilt: 0.45, o: 0.35 }, // behind the dashboard
   { name: 'lattice', gen: lattice,   x: 0,    y: 0,    s: 1.0,  tilt: 0.55, o: 0.4 },
   { name: 'network', gen: network,   x: 2.4,  y: 0,    s: 1.0,  tilt: 0.3,  o: 0.95 },
@@ -155,5 +158,5 @@ const PLACEMENT = [
   { name: 'portal',  gen: portal,    x: 0,    y: 0.1,  s: 1.25, tilt: 0.0,  o: 0.85 },
 ];
 
-/** name → { gen, x, y, s, tilt, o } */
+/** name → { gen, x, y, s, tilt, o, r? } */
 export const SHAPES = Object.fromEntries(PLACEMENT.map((p) => [p.name, p]));

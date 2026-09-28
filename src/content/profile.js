@@ -190,7 +190,7 @@ export const profile = {
       { label: 'cloud', items: ['AWS', 'Google Cloud', 'Azure AKS'] },
       { label: 'infra', items: ['Docker', 'Kubernetes', 'Helm', 'Ansible'] },
       { label: 'apis', items: ['gRPC', 'GraphQL', 'REST'] },
-      { label: 'identity', items: ['OIDC', 'Okta', 'SSO'] },
+      { label: 'identity', items: ['Okta (IdP)', 'OIDC', 'SSO', 'OAuth 2.0'] },
       { label: 'data', items: ['PostgreSQL', 'MSSQL', 'Kafka', 'Pub/Sub', 'Liquibase'] },
       { label: 'delivery', items: ['GitHub Actions', 'CI/CD', 'Git'] },
       { label: 'observability', items: ['Datadog', 'ELK', 'Grafana', 'Prometheus'] },

@@ -105,6 +105,13 @@ export function createScene(canvas, { shapes: names, reducedMotion = false }) {
   const pointer = { x: 0, y: 0, sx: 0, sy: 0, active: false };
   const worldHalfWidth = () => Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z * camera.aspect;
 
+  /** Viewport-dependent adjustments to every shape's placement. */
+  function layout() {
+    const half = worldHalfWidth();
+    const narrow = window.innerWidth < 900;
+    return { half, narrow, xScale: narrow ? 0 : Math.min(1, half / 5.2), yShift: narrow ? 0.4 : 0, sScale: narrow ? 0.85 : 1 };
+  }
+
   function loadSegment(i) {
     segment = i;
     posA.array.set(shapes[i]);
@@ -178,14 +185,12 @@ export function createScene(canvas, { shapes: names, reducedMotion = false }) {
     // interpolate placement between shape i and i+1
     const A = SEQUENCE[i], B = SEQUENCE[i + 1];
     const e = local * local * (3 - 2 * local);
-    const half = worldHalfWidth();
-    const narrow = window.innerWidth < 900;
-    const xScale = narrow ? 0 : Math.min(1, half / 5.2);
-    group.position.x = lerp(A.x, B.x, e) * xScale;
-    group.position.y = lerp(A.y, B.y, e) + (narrow ? 0.4 : 0);
-    const s = lerp(A.s, B.s, e) * (narrow ? 0.85 : 1);
+    const L = layout();
+    group.position.x = lerp(A.x, B.x, e) * L.xScale;
+    group.position.y = lerp(A.y, B.y, e) + L.yShift;
+    const s = lerp(A.s, B.s, e) * L.sScale;
     group.scale.setScalar(s);
-    const opacity = lerp(A.o, B.o, e) * (narrow ? 0.55 : 1);
+    const opacity = lerp(A.o, B.o, e) * (L.narrow ? 0.55 : 1);
     uniforms.uOpacity.value = opacity;
     ringMat.opacity = 0.22 * opacity * (1 - Math.min(1, c) * 0.6);
 
@@ -226,5 +231,19 @@ export function createScene(canvas, { shapes: names, reducedMotion = false }) {
     setProgress(p) { target = p; },
     /** jump straight to the current target (used behind the nav curtain) */
     snap() { snapFrames = 3; },
+    /**
+     * Where a shape sits on screen when at rest: centre and bounding radius in
+     * CSS px (radius 0 if the shape has none). Lets DOM overlays lock onto it.
+     */
+    anchor(name) {
+      const S = SEQUENCE.find((q) => q.name === name);
+      const L = layout();
+      const px = window.innerWidth / 2 / L.half; // CSS px per world unit at z = 0
+      return {
+        x: window.innerWidth / 2 + S.x * L.xScale * px,
+        y: window.innerHeight / 2 - (S.y + L.yShift) * px,
+        r: (S.r || 0) * S.s * L.sScale * px,
+      };
+    },
   };
 }
