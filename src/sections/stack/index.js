@@ -13,6 +13,7 @@ import { attachTooltip } from './widgets/tooltip.js';
 import { createPipeline } from './widgets/pipeline.js';
 import { createCluster } from './widgets/cluster.js';
 import { createMetrics } from './widgets/metrics.js';
+import { createIdentity } from './widgets/identity.js';
 
 export default defineSection({
   id: 'stack',
@@ -31,6 +32,7 @@ export default defineSection({
     const pipeline = createPipeline(board);
     const cluster = createCluster(board);
     const metrics = createMetrics(board);
+    const identity = createIdentity(board);
     const fit = fitToViewport(arch, { reserve: 24, section: root });
     const relayout = () => { fit(); wires.layout(); };
 
@@ -49,7 +51,7 @@ export default defineSection({
 
     // packets only flow once the system has been "built" by scrolling
     let built = false;
-    const loop = createLoop([[() => pipeline.tick(), 750], [() => cluster.tick(), 2200], [() => metrics.tick(), 700]]);
+    const loop = createLoop([[() => pipeline.tick(), 750], [() => cluster.tick(), 2200], [() => metrics.tick(), 700], [() => identity.tick(), 2600]]);
     const markBuilt = () => { built = true; if (loop.running) wires.play(); };
 
     const mm = gsap.matchMedia();
@@ -81,6 +83,8 @@ export default defineSection({
         .from(q('.wire-drop'), { opacity: 0, duration: 0.3 }, 1.2)
         .from(q('.ab-client, .ab-api'), { ...rise, stagger: 0.1 }, 1.5)
         .fromTo(wires.byKind('flow'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.12, duration: 0.4, ease: 'none' }, 1.75)
+        .from(q('.ab-idp'), rise, 1.85)
+        .fromTo(wires.byKind('auth'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.1, duration: 0.3, ease: 'none' }, 2.05)
         .from(q('.ab-ci'), rise, 2.2)
         .fromTo(wires.byKind('deploy'), { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.3, ease: 'none' }, 2.45)
         .from(q('.ab-obs'), rise, 2.7)

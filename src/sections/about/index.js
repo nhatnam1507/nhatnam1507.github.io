@@ -7,8 +7,9 @@ import { $, $$ } from '../../shared/dom.js';
 import { MEDIA } from '../../shared/env.js';
 import { createLoop, fitToViewport, whileVisible } from '../../shared/motion.js';
 import { typeTokens } from '../../shared/text.js';
+import { formatClock as formatTime } from '../../shared/time.js';
 import { template } from './template.js';
-import { DAY, LOG_LINES, PROCESSES, TIME_ZONE, readmeTokens } from './content.js';
+import { DAY, LOG_LINES, PROCESSES, readmeTokens } from './content.js';
 import { createHtop } from './widgets/htop.js';
 import { createChart } from './widgets/chart.js';
 import { drawSparkline } from './widgets/sparkline.js';
@@ -16,9 +17,6 @@ import { createHeatmap } from './widgets/heatmap.js';
 import { createGauge } from './widgets/gauge.js';
 import { createLogStream } from './widgets/logs.js';
 import { createUptime } from './widgets/uptime.js';
-
-const timeFmt = new Intl.DateTimeFormat('en-GB', { timeZone: TIME_ZONE, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-const formatTime = (d) => timeFmt.format(d);
 
 export default defineSection({
   id: 'about',

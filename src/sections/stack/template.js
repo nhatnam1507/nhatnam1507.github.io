@@ -10,6 +10,7 @@ const EXTRAS = {
   plat: `<div class="pods js-pods">${repeat('<i></i>', 12)}</div><div class="pods-label"><b class="js-pods-n">12/12</b> pods Running</div>`,
   obs: `<div class="rps js-rps">${repeat('<i></i>', 14)}</div><div class="rps-label">p99 <b class="js-p99">42</b>ms · errors <b>0.0%</b></div>`,
   data: `<div class="queue js-queue" aria-hidden="true">${repeat('<i></i>', 6)}</div>`,
+  idp: `<div class="jwt" aria-hidden="true"><code class="js-jwt"><i class="jwt-h">eyJhbGciOiJSUzI1NiJ9</i>.<i class="jwt-p">eyJzdWIiOiJuYW0ifQ</i>.<i class="jwt-s">kX9fQ2vLr8</i></code><span class="jwt-ok js-jwt-ok">✓ verified</span></div>`,
 };
 
 const box = (id) => {
@@ -55,7 +56,7 @@ export const template = (ctx) => `
         </div>
       </header>
       <div class="arch-board js-arch-board">
-        ${pipeline()}${clients()}${['api', 'svc', 'data', 'obs', 'plat'].map(box).join('')}
+        ${pipeline()}${clients()}${['api', 'idp', 'svc', 'data', 'obs', 'plat'].map(box).join('')}
         <svg class="arch-wires js-wires" aria-hidden="true"></svg>
       </div>
       <div class="arch-tip js-arch-tip" role="status"></div>
