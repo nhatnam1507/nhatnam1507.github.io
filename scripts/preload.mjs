@@ -34,8 +34,10 @@ const block = [START, ...files.map((f) => `  <link rel="modulepreload" href="${f
 
 const indexPath = join(root, 'index.html');
 const html = await readFile(indexPath, 'utf8');
-const next = html.includes(START)
-  ? html.replace(new RegExp(`${START}[\\s\\S]*?${END}`), block.trimStart())
+// plain string slicing: the markers contain regex metacharacters
+const [from, to] = [html.indexOf(START), html.indexOf(END)];
+const next = from > -1 && to > from
+  ? html.slice(0, from) + block.trimStart() + html.slice(to + END.length)
   : html.replace('  <link rel="stylesheet" href="src/styles.css" />', `  <link rel="stylesheet" href="src/styles.css" />\n  ${block}`);
 
 if (process.argv.includes('--check')) {

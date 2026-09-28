@@ -22,7 +22,7 @@
   grid-template-areas:
     '.      ci  ci  ci   ci'
     'client api svc data obs'
-    '.      plat plat plat plat';
+    'idp    idp plat plat plat';
   column-gap: 44px;
   row-gap: 42px;
   align-items: center;
@@ -38,6 +38,8 @@
 .pk-flow { fill: #9fd0ff; color: #5aa9ff; }
 .pk-deploy { fill: #cdb8ff; color: #b18cff; }
 .pk-telemetry { fill: #ffd59e; color: #ffbd6b; }
+.wire-auth { stroke: rgba(255, 122, 198, 0.55); stroke-dasharray: 0.03 0.02; }
+.pk-auth { fill: #ffc2e6; color: #ff7ac6; }
 
 .ab {
   position: relative;
@@ -54,6 +56,9 @@
 .ab-svc { grid-area: svc; border-color: rgba(46, 242, 176, 0.35); box-shadow: 0 0 40px -18px rgba(46, 242, 176, 0.6); }
 .ab-data { grid-area: data; }
 .ab-obs { grid-area: obs; }
+.ab-idp { grid-area: idp; align-self: stretch; border-color: rgba(255, 122, 198, 0.35); }
+.ab-idp .ab-h > span { color: #ff7ac6; }
+.ab-idp .ab-nodes { flex-direction: row; }
 .ab-plat { grid-area: plat; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px 20px; }
 .ab-plat .ab-h { margin: 0; }
 
@@ -145,6 +150,16 @@
 .queue i { flex: 1; height: 6px; border-radius: 2px; background: rgba(255, 255, 255, 0.07); transition: background 0.3s; }
 .queue i.is-on { background: rgba(90, 169, 255, 0.8); }
 
+/* identity: a JWT issued and verified on every tick */
+.jwt { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 10px; font-family: var(--mono); font-size: 10.5px; }
+.jwt code { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--dim); }
+.jwt i { font-style: normal; }
+.jwt-h { color: #ff7ac6; }
+.jwt-p { color: #b18cff; }
+.jwt-s { color: #5aa9ff; }
+.jwt-ok { flex: none; color: var(--muted); }
+.jwt-ok.is-ok { color: var(--accent); }
+
 /* tooltip */
 .arch-tip {
   position: absolute;
@@ -184,7 +199,7 @@
 @media (max-width: 899px) {
   .stack { display: block; padding: 110px 0 60px; }
   .arch { transform: none; }
-  .arch-board { grid-template-columns: 1fr; grid-template-areas: 'ci' 'api' 'svc' 'data' 'obs' 'plat'; row-gap: 12px; }
+  .arch-board { grid-template-columns: 1fr; grid-template-areas: 'ci' 'api' 'idp' 'svc' 'data' 'obs' 'plat'; row-gap: 12px; }
   .arch-wires, .ab-client { display: none; }
   .ab-nodes { flex-direction: row; flex-wrap: wrap; }
   .ci { flex-wrap: wrap; }

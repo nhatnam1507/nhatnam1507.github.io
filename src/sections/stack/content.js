@@ -7,7 +7,11 @@ export const LEVELS = { core: 'core skill', used: 'in production', explore: 'cur
 export const BOXES = {
   api: {
     title: 'api edge', sub: 'exposed via',
-    items: [['gRPC', 'used', /grpc/i], ['GraphQL', 'used', /graphql/i], ['REST', 'used', /\brest\b/i], ['OIDC / Okta', 'used', /oidc|okta/i]],
+    items: [['gRPC', 'used', /grpc/i], ['GraphQL', 'used', /graphql/i], ['REST', 'used', /\brest\b/i]],
+  },
+  idp: {
+    title: 'identity', sub: 'authN · authZ · SSO by',
+    items: [['Okta', 'used', /okta/i], ['OIDC', 'used', /oidc/i], ['SSO', 'used', /single sign-on|\bsso\b/i]],
   },
   svc: {
     title: 'services', sub: 'written in',
@@ -40,6 +44,8 @@ export const STAGES = [
 export const WIRES = [
   ['w-client-api', 'client', 'api', 'flow'],
   ['w-api-svc', 'api', 'svc', 'flow'],
+  ['w-client-idp', 'client', 'idp', 'auth'],
+  ['w-api-idp', 'api', 'idp', 'auth'],
   ['w-svc-data', 'svc', 'data', 'flow'],
   ['w-data-obs', 'data', 'obs', 'telemetry'],
   ['w-ci-svc', 'ci', 'svc', 'deploy'],
@@ -52,6 +58,7 @@ export const STEPS = [
   '$ go build ./services/...',
   '$ migrate up · kafka topics created',
   '$ expose grpc · graphql · rest',
+  '$ okta: oidc client registered · sso on',
   '$ gh workflow run pipeline',
   '$ curl /healthz → 200 · all green ✓',
 ];

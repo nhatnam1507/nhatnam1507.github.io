@@ -52,4 +52,3 @@ export const DAY = {
   note: { at: 5, text: 'lunch → bug +1' },
 };
 
-export const TIME_ZONE = 'Asia/Ho_Chi_Minh';

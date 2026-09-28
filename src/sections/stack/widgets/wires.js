@@ -6,6 +6,19 @@ import { isDesktop } from '../../../shared/env.js';
 
 const PACKETS_PER_WIRE = 3;
 
+/** Path from box A to box B: straight down if B sits under A, down-and-across
+ *  if B is below but to the side, otherwise a horizontal S-curve. */
+function route(A, B) {
+  if (B.t >= A.b) {
+    const l = Math.max(A.l, B.l), r = Math.min(A.r, B.r);
+    if (r > l) { const x = (l + r) / 2; return `M ${x} ${A.b} L ${x} ${B.t}`; }
+    const x = (A.l + A.r) / 2, y = (B.t + B.b) / 2;
+    return `M ${x} ${A.b} C ${x} ${y}, ${x} ${y}, ${B.l} ${y}`;
+  }
+  const y1 = (A.t + A.b) / 2, y2 = (B.t + B.b) / 2, mx = (A.r + B.l) / 2;
+  return `M ${A.r} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${B.l} ${y2}`;
+}
+
 export function createWires(board, svg, wires) {
   const boxEl = (id) => $(`[data-box="${id}"]`, board);
   let built = false;
@@ -36,22 +49,11 @@ export function createWires(board, svg, wires) {
       return { l: (r.left - b.left) / scale, t: (r.top - b.top) / scale, r: (r.right - b.left) / scale, b: (r.bottom - b.top) / scale };
     };
     svg.setAttribute('viewBox', `0 0 ${board.offsetWidth} ${board.offsetHeight}`);
-    wires.forEach(([id, from, to, kind]) => {
-      const A = rect(boxEl(from)), B = rect(boxEl(to));
-      let d;
-      if (kind === 'deploy') {
-        const x = (B.l + B.r) / 2;
-        d = `M ${x} ${A.b} L ${x} ${B.t}`;
-      } else {
-        const y1 = (A.t + A.b) / 2, y2 = (B.t + B.b) / 2, mx = (A.r + B.l) / 2;
-        d = `M ${A.r} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${B.l} ${y2}`;
-      }
-      $(`#${id}`, svg).setAttribute('d', d);
-    });
-    // "runs on" drops from each box down to the platform band
+    wires.forEach(([id, from, to]) => $(`#${id}`, svg).setAttribute('d', route(rect(boxEl(from)), rect(boxEl(to)))));
+    // "runs on" drops from each box above the platform band
     const P = rect(boxEl('plat'));
     $('.js-drops', svg).setAttribute('d', ['api', 'svc', 'data', 'obs']
-      .map((id) => { const X = rect(boxEl(id)); const x = (X.l + X.r) / 2; return `M ${x} ${X.b} L ${x} ${P.t}`; }).join(' '));
+      .map((id) => { const X = rect(boxEl(id)); const x = (X.l + X.r) / 2; return x > P.l && x < P.r ? `M ${x} ${X.b} L ${x} ${P.t}` : ''; }).join(' '));
   };
 
   return {
