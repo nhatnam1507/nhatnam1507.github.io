@@ -1,14 +1,11 @@
-// Renders the printable CV (cv.html) from the shared data.
-import { cv } from './data.js';
+// Printable A4 CV markup, rendered from the same content as the portfolio.
+import { esc } from '../shared/dom.js';
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-const c = cv.contact;
-
-const contact = [
-  ['mail', c.email, `mailto:${c.email}`],
-  ['phone', c.phone, `tel:${c.phone}`],
-  ['in', c.linkedin, `https://www.${c.linkedin}`],
-  ['gh', c.github, `https://${c.github}`],
+const contactRows = ({ email, phone, linkedin, github }) => [
+  ['mail', email, `mailto:${email}`],
+  ['phone', phone, `tel:${phone}`],
+  ['in', linkedin, `https://www.${linkedin}`],
+  ['gh', github, `https://${github}`],
   ['web', 'nhatnam1507.github.io', 'https://nhatnam1507.github.io'],
 ];
 
@@ -26,42 +23,44 @@ const job = (j) => `
     </div>
   </section>`;
 
-document.getElementById('cv').innerHTML = `
+const list = (items) => items.map(esc).join(' · ');
+
+export const cvTemplate = (p) => `
   <header class="head">
     <div>
       <div class="prompt">nam@dev:~$ cat cv.pdf</div>
-      <h1>${esc(cv.name)}</h1>
-      <p class="role">${esc(cv.title)} <span>— ${esc(cv.tagline)}</span></p>
+      <h1>${esc(p.name)}</h1>
+      <p class="role">${esc(p.title)} <span>— ${esc(p.tagline)}</span></p>
     </div>
     <ul class="contact">
-      <li><span class="k">loc</span> ${esc(cv.location)}</li>
-      ${contact.map(([k, v, href]) => `<li><span class="k">${k}</span> <a href="${href}">${esc(v)}</a></li>`).join('')}
+      <li><span class="k">loc</span> ${esc(p.location)}</li>
+      ${contactRows(p.contact).map(([k, v, href]) => `<li><span class="k">${k}</span> <a href="${href}">${esc(v)}</a></li>`).join('')}
     </ul>
   </header>
 
   <section class="block">
     <h2><span>01</span> Summary</h2>
-    <p class="summary">${esc(cv.summary)}</p>
+    <p class="summary">${esc(p.summary)}</p>
   </section>
 
   <section class="block">
     <h2><span>02</span> Technologies</h2>
     <dl class="skills">
-      <div class="skills-row core"><dt>core</dt><dd>${cv.skills.core.map(esc).join(' · ')}</dd></div>
-      ${cv.skills.groups.map((g) => `<div class="skills-row"><dt>${esc(g.label)}</dt><dd>${g.items.map(esc).join(' · ')}</dd></div>`).join('')}
-      <div class="skills-row"><dt>exploring</dt><dd>${cv.skills.exploring.map(esc).join(' · ')}</dd></div>
+      <div class="skills-row core"><dt>core</dt><dd>${list(p.skills.core)}</dd></div>
+      ${p.skills.groups.map((g) => `<div class="skills-row"><dt>${esc(g.label)}</dt><dd>${list(g.items)}</dd></div>`).join('')}
+      <div class="skills-row"><dt>exploring</dt><dd>${list(p.skills.exploring)}</dd></div>
     </dl>
   </section>
 
   <section class="block">
     <h2><span>03</span> Experience</h2>
-    ${cv.experience.map(job).join('')}
+    ${p.experience.map(job).join('')}
   </section>
 
   <div class="two">
     <section class="block">
       <h2><span>04</span> Certificates</h2>
-      ${cv.certificates.map((x) => `
+      ${p.certificates.map((x) => `
         <div class="item">
           <div class="item-title">${esc(x.name)}</div>
           <div class="item-meta">${esc(x.date)} · <span class="mono">${esc(x.id)}</span></div>
@@ -69,15 +68,11 @@ document.getElementById('cv').innerHTML = `
     </section>
     <section class="block">
       <h2><span>05</span> Education</h2>
-      ${cv.education.map((e) => `
+      ${p.education.map((e) => `
         <div class="item">
           <div class="item-title">${esc(e.school)}</div>
           <div class="item-sub">${esc(e.degree)}</div>
           <div class="item-meta">${esc(e.start)} – ${esc(e.end)}</div>
         </div>`).join('')}
     </section>
-  </div>
-`;
-
-document.querySelector('.js-print').addEventListener('click', () => window.print());
-document.fonts.ready.then(() => document.body.classList.add('is-ready'));
+  </div>`;

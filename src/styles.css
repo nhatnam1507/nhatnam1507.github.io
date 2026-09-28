@@ -1,0 +1,24 @@
+/* CSS entry point: the style "include" list, in cascade order.
+   shared primitives → app shell → one file per section (same order as the page). */
+
+@import './shared/styles/fonts.css';
+@import './shared/styles/base.css';
+@import './shared/styles/ui.css';
+
+@import './app/styles/backdrop.css';
+@import './app/styles/boot.css';
+@import './app/styles/curtain.css';
+@import './app/styles/cursor.css';
+@import './app/styles/nav.css';
+@import './app/styles/hud.css';
+
+@import './sections/hero/hero.css';
+@import './sections/about/about.css';
+@import './sections/experience/experience.css';
+@import './sections/stack/stack.css';
+@import './sections/marquee/marquee.css';
+@import './sections/credentials/credentials.css';
+@import './sections/contact/contact.css';
+
+@import './app/styles/footer.css';
+@import './app/styles/toast.css';

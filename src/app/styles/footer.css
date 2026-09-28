@@ -1,0 +1,5 @@
+/* Footer */
+
+.footer { border-top: 1px solid var(--line); padding: 26px 0 60px; font-family: var(--mono); font-size: 12px; color: var(--muted); background: rgba(5, 6, 8, 0.8); }
+.footer-inner { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+.eof { color: var(--accent); }

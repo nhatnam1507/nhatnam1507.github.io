@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "serve": "npx --yes http-server -p 8080 -c-1 .",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "preload": "node scripts/preload.mjs",
     "pdf": "node scripts/build-pdf.mjs"
   },
   "devDependencies": {
