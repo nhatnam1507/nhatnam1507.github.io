@@ -35,7 +35,7 @@ const clients = () => `
   <div class="ab ab-client" data-box="client">
     <div class="client-icon" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="ab-h">clients</div>
-    <small>web · mobile · services</small>
+    <small>web · mobile<br />services</small>
   </div>`;
 
 export const template = (ctx) => `

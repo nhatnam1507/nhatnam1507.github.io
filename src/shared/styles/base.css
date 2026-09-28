@@ -9,7 +9,7 @@
   --line-2: rgba(255, 255, 255, 0.14);
   --text: #e8edf2;
   --muted: #8b95a4;
-  --dim: #545d6b;
+  --dim: #6e7785; /* ≥ 4.3:1 on --bg so small labels stay readable */
   --accent: #2ef2b0;
   --accent-2: #5aa9ff;
   --accent-3: #b18cff;
