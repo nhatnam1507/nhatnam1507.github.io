@@ -1,0 +1,22 @@
+/* Toast notifications */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 95;
+  transform: translate(-50%, 30px);
+  padding: 12px 18px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  background: var(--panel-solid);
+  border: 1px solid rgba(46, 242, 176, 0.45);
+  border-radius: 10px;
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s, transform 0.5s var(--ease);
+}
+.toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+.toast b { color: var(--accent); font-weight: 500; }

@@ -1,0 +1,21 @@
+/* Nav jump curtain */
+
+.curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  background: var(--bg);
+  border-top: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+  box-shadow: 0 0 40px rgba(46, 242, 176, 0.25);
+  will-change: transform;
+  pointer-events: none;
+}
+
+.curtain-cmd { font-family: var(--mono); font-size: 14px; color: var(--accent); }
+.curtain-cmd::before { content: '$ '; color: var(--dim); }
+.curtain-cmd::after { content: ''; display: inline-block; width: 8px; height: 15px; margin-left: 4px; vertical-align: -2px; background: var(--accent); }

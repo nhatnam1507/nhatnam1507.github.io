@@ -1,8 +1,8 @@
-// Single source of truth for the portfolio page (index.html) and the
-// printable CV template (cv.html). Edit here, then run `npm run pdf`
-// to regenerate assets/cv/Nam_Nguyen_Nhat_CV.pdf.
+// Content layer: the CV itself, and the single source of truth for both the
+// portfolio (index.html) and the printable CV (cv.html). Pure data, no logic.
+// After editing, run `npm run pdf` to regenerate assets/cv/Nam_Nguyen_Nhat_CV.pdf.
 
-export const cv = {
+export const profile = {
   name: 'Nam Nguyen Nhat',
   title: 'Senior Software Engineer',
   tagline: 'Backend · Cloud · DevOps',
@@ -197,9 +197,3 @@ export const cv = {
     ],
   },
 };
-
-/** Whole years since careerStart, e.g. 6 */
-export function yearsOfExperience(now = new Date()) {
-  const start = new Date(cv.careerStart);
-  return Math.floor((now - start) / (365.25 * 24 * 3600 * 1000));
-}

@@ -1,0 +1,39 @@
+/* Custom cursor */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 90;
+  pointer-events: none;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border: 1px solid rgba(46, 242, 176, 0.55);
+  border-radius: 50%;
+  opacity: 0;
+  transition: width 0.3s var(--ease), height 0.3s var(--ease), margin 0.3s var(--ease), background 0.3s, opacity 0.3s;
+}
+
+.cursor span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.cursor.is-visible { opacity: 1; }
+.cursor.is-hover {
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  background: rgba(46, 242, 176, 0.12);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor { display: none; }
+}

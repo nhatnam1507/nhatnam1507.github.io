@@ -2,40 +2,83 @@
 
 Personal portfolio of **Nam Nguyen Nhat**: a scrollytelling site with a Three.js particle scene, plus a printable CV that exports to PDF.
 
-- `index.html`: the portfolio. A particle "core" changes shape per section (core → helix → lattice → network → knot → portal) as you scroll.
-- `cv.html`: an A4 CV template that renders from the same data. It has **Print / Save as PDF** and **Download PDF** buttons.
-- `assets/cv/Nam_Nguyen_Nhat_CV.pdf`: the pre-built PDF behind every **Export CV** button.
+It is static HTML, CSS and ES modules with no build step. Three.js, GSAP/ScrollTrigger, Lenis and the Geist fonts are vendored under `assets/`.
 
-Everything is static and needs no build step. Three.js, GSAP/ScrollTrigger, Lenis and the Geist fonts are vendored under `assets/`, so the site has no CDN dependencies.
+## Architecture
 
-## Structure
+The code follows clean-architecture layering, adapted to a front end. Dependencies point inwards only: sections and the app shell depend on the shared kernel, the domain and the content, and never the other way round.
 
 ```
-index.html             portfolio page
-cv.html                printable CV template (A4)
-assets/js/data.js      ← single source of truth: edit your CV here
-assets/js/main.js      rendering, scroll animations, HUD, export
-assets/js/scene.js     Three.js particle morph scene
-assets/js/cv.js        renders cv.html from data.js
-assets/css/            main.css (site), cv.css (print template), fonts.css
-assets/vendor/         three, gsap, ScrollTrigger, lenis
-assets/cv/             generated PDF
-scripts/build-pdf.mjs  headless-Chromium PDF generator
+index.html                 thin shell: <head>, fixed chrome, <main id="app">, one module script
+cv.html                    printable CV shell
+assets/                    static public files (fonts, vendor libs, CV pdf) → Next.js /public
+src/
+  main.js                  composition root: builds the context, renders + mounts sections
+  styles.css               CSS entry: the ordered @import list (shared → app → sections)
+  content/
+    profile.js             the CV data: single source for the site and the PDF
+  domain/
+    career.js              pure rules: months, tenure, roles, stats, rolesUsing (no DOM, no libs)
+  shared/                  framework-agnostic UI kernel
+    dom.js env.js lib.js   $/esc helpers, breakpoints, adapter for gsap/lenis globals
+    motion.js text.js      pin ranges, live-while-visible loops, fit-to-viewport; text effects
+    random.js ui.js        seeded RNG + hash; kicker / icon / export-button partials
+    styles/                tokens + reset (base.css), UI primitives (ui.css), fonts
+  app/                     application shell
+    contract.js            the Section interface every block implements
+    registry.js            ordered list of blocks = the page (nav, HUD, scene all derive from it)
+    page.js                render + mount blocks in order
+    navigation.js          nav links + curtain jumps     tracker.js   scroll → scene, HUD, nav
+    boot.js cursor.js export-cv.js reveals.js smooth-scroll.js
+    scene/                 Three.js adapter: scene.js (renderer), shapes.js, shaders.js
+    styles/                chrome CSS (nav, hud, boot, curtain, cursor, footer, toast, backdrop)
+  sections/                one folder per feature
+    <name>/index.js        defineSection({ id, label, shape, template, mount, onReady })
+    <name>/template.js     markup: a pure function of the page context
+    <name>/<name>.css      the section's styles
+    <name>/content.js      section-specific copy/config (optional)
+    <name>/widgets/        one module per interactive widget (optional)
+  cv/                      print template feature (index.js, template.js, cv.css)
+tests/                     node --test suites for the pure domain layer
+scripts/                   build-pdf.mjs, preload.mjs
 ```
 
-## Updating the CV
+### Why it is shaped this way
 
-1. Edit `assets/js/data.js`.
-2. Regenerate the PDF:
-   ```sh
-   npm install          # installs playwright
-   npx playwright install chromium   # first time only
-   npm run pdf
-   ```
-3. Commit and push.
+- **One folder per section.** Hero, about, experience, stack, marquee, credentials and contact each own their markup, behaviour and styles. Each maps 1:1 to a future `<About />` component.
+- **The registry is the page.** `src/app/registry.js` lists the blocks in order. Nav numbers, HUD labels and the 3D shape sequence are all derived from that list, so they can't drift apart. Mount order also follows it, which ScrollTrigger pins require.
+- **Open/closed.** To add a section, create `src/sections/<name>/`, export `defineSection({...})`, add it to the registry, and add its CSS to `src/styles.css`. Nothing else needs to change.
+- **Dependency inversion.**
+  - The shell depends only on the `Section` contract, not on concrete sections.
+  - Libraries are reached through `shared/lib.js`, so switching to npm imports touches one file.
+  - The cursor reacts to `[data-hover]` rather than to specific sections' classes.
+- **Pure core.** `domain/career.js` and `content/profile.js` have no DOM or library imports. They run under `node --test` and would move unchanged into a Next.js `lib/` folder or a backend.
 
-Run `npm run serve` to preview locally at http://localhost:8080. It has to be served over HTTP, because opening the file directly breaks ES modules.
+### Moving to Next.js later
+
+| here | Next.js |
+|---|---|
+| `assets/` | `public/` |
+| `src/content`, `src/domain` | `lib/` (copy as is) |
+| `src/sections/<name>/template.js` + `index.js` | `components/<Name>.tsx` (template → JSX, `mount` → `useEffect`/`useGSAP`) |
+| `src/sections/<name>/<name>.css` | `<Name>.module.css` |
+| `src/app/registry.js` | the page component rendering sections in order |
+| `src/app/*` shell | layout components and hooks |
+| `src/shared/lib.js` | `import gsap from 'gsap'` etc. |
+
+## Working on it
+
+```sh
+npm run serve      # http://localhost:8080 (ES modules need http://, not file://)
+npm test           # domain unit tests
+npm run preload    # after adding/moving a module: refresh <link rel="modulepreload"> in index.html
+npm run pdf        # after editing src/content/profile.js: rebuild assets/cv/Nam_Nguyen_Nhat_CV.pdf
+```
+
+`npm run pdf` needs `npm install` and `npx playwright install chromium` the first time.
+
+To update the CV, edit `src/content/profile.js` and run `npm run pdf`. Both the site and the PDF read from that one file.
 
 ## Deploying
 
-This is a user site, so GitHub Pages serves it from the default branch root. Go to **Settings → Pages → Build and deployment**, set the source to *Deploy from a branch*, and pick `main` with `/ (root)`. The site goes live at https://nhatnam1507.github.io.
+GitHub Pages serves this user site from the default branch root. In **Settings → Pages**, set the source to *Deploy from a branch* and choose `main` with `/ (root)`.
