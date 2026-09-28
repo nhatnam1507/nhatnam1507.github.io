@@ -1,6 +1,6 @@
 /* 05 · contact — the channels as API endpoints, and a terminal that says hello */
 
-.contact { display: flex; align-items: center; }
+.contact { min-height: 0; padding-top: 40px; } /* last section: content height; credentials' bottom padding already spaces it */
 
 .contact-title {
   margin: 0 0 44px;

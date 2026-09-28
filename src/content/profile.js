@@ -34,7 +34,7 @@ export const profile = {
       // portfolio-only fields: timeline label, one-line story, headline metric
       label: 'Andpad',
       highlight: 'gRPC and GraphQL services on AWS (ECS/EKS, Lambda), shipped through GitHub Actions and watched with Datadog.',
-      impact: { value: 'gRPC', label: 'service mesh between microservices' },
+      impact: { value: 'gRPC', label: 'calls between internal microservices' },
     },
     {
       role: 'Software Engineer',
@@ -44,7 +44,7 @@ export const profile = {
       start: 'May 2025',
       end: 'Feb 2026',
       bullets: [
-        'Implemented single sign-on across multiple identity providers (Okta, Keycloak, Google, Facebook and more) on top of OpenID Connect, so enterprise clients sign in with the provider they already use.',
+        'Implemented OIDC-based single sign-on across multiple identity providers (Okta, Keycloak, Google, Facebook).',
         'Developed Go services to route data from a high-volume IoT device fleet into Google Cloud Pub/Sub.',
         'Developed Go parsers to decode IoT byte-stream data, improving processing accuracy and scalability.',
         'Developed unit tests with Go’s testing package and Testify, catching bugs early in development.',
@@ -52,7 +52,7 @@ export const profile = {
       ],
       tags: ['Go', 'Multi-IdP SSO', 'GCP Pub/Sub', 'IoT', 'Testify'],
       label: 'Synapse ITS',
-      highlight: 'Single sign-on across Okta, Keycloak, Google, Facebook… via OpenID Connect, plus Go pipelines decoding IoT byte streams into Google Pub/Sub.',
+      highlight: 'OIDC single sign-on across Okta, Keycloak, Google and Facebook, plus Go pipelines streaming IoT data into Pub/Sub.',
       impact: { value: '90%+', label: 'test coverage after refactor' },
     },
     {
