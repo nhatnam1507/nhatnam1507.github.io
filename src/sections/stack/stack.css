@@ -58,7 +58,7 @@
 .ab-obs { grid-area: obs; }
 .ab-idp { grid-area: idp; align-self: stretch; border-color: rgba(255, 122, 198, 0.35); }
 .ab-idp .ab-h > span { color: #ff7ac6; }
-.ab-idp .ab-nodes { flex-direction: row; }
+.ab-idp .ab-nodes { flex-direction: row; flex-wrap: wrap; }
 .ab-plat { grid-area: plat; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px 20px; }
 .ab-plat .ab-h { margin: 0; }
 

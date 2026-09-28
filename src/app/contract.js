@@ -12,6 +12,7 @@
  * @property {{years:number, roles:number, employers:number}} stats
  * @property {Date} now
  * @property {{reducedMotion:boolean, finePointer:boolean}} env
+ * @property {{anchor: (shape: string) => {x:number, y:number, r:number}}|null} scene  the 3D scene (null without WebGL)
  * @property {number} index            position among sections (hero = 0)
  */
 
