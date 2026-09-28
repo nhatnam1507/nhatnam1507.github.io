@@ -302,12 +302,6 @@ export function setupAbout({ gsap, ScrollTrigger, years, careerStart, reducedMot
       timers.splice(0).forEach(clearInterval);
     },
   };
-  ScrollTrigger.create({
-    trigger: section,
-    start: 'top bottom',
-    end: 'bottom top',
-    onToggle: (self) => (self.isActive ? live.start() : live.stop()),
-  });
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) live.stop();
     else if (ScrollTrigger.isInViewport(section)) live.start();
@@ -380,4 +374,9 @@ export function setupAbout({ gsap, ScrollTrigger, years, careerStart, reducedMot
     gsap.fromTo(chart.lines, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.out', stagger: 0.15, scrollTrigger: { trigger: '.p-chart', start: 'top 80%' } });
     gsap.to(setHeat, { v: 1, duration: 1.4, ease: 'power1.out', onUpdate: heatUpdate, scrollTrigger: { trigger: '.p-heat', start: 'top 85%' } });
   });
+
+  // Created after the pin exists so the range spans the whole pinned scroll
+  // (the pin-spacer is taller than the section itself).
+  const range = section.parentElement.classList.contains('pin-spacer') ? section.parentElement : section;
+  ScrollTrigger.create({ trigger: range, start: 'top bottom', end: 'bottom top', onToggle: (s) => (s.isActive ? live.start() : live.stop()) });
 }

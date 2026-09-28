@@ -217,21 +217,32 @@
       </div>
     </section>
 
-    <!-- 03 STACK -->
+    <!-- 03 STACK: the toolset drawn as the system it builds. Layers deploy one
+         by one on scroll (pinned on desktop), then traffic flows live. -->
     <section id="stack" class="section stack" data-label="stack">
-      <div class="container">
-        <p class="kicker"><span>03</span> // stack</p>
-        <h2 class="h2 split">Tools of the <span class="grad">trade</span>.</h2>
-        <div class="stack-grid">
-          <div class="term term-stack">
-            <div class="term-bar"><i></i><i></i><i></i><span>stack.yaml</span></div>
-            <pre class="term-body"><code class="js-yaml"></code></pre>
-          </div>
-          <div class="skill-groups js-skill-groups"></div>
+      <div class="container stack-inner">
+        <div class="arch js-arch">
+          <header class="arch-head">
+            <div>
+              <p class="kicker"><span>03</span> // stack</p>
+              <h2 class="arch-title">The stack, <span class="grad">as a system</span>.</h2>
+            </div>
+            <div class="arch-side">
+              <div class="arch-legend" aria-hidden="true">
+                <span><i class="lg-core"></i>core</span>
+                <span><i class="lg-used"></i>used</span>
+                <span><i class="lg-explore"></i>exploring</span>
+              </div>
+              <div class="arch-step"><span class="js-arch-step">$ terraform init</span></div>
+            </div>
+          </header>
+          <div class="arch-board js-arch-board"></div>
+          <div class="arch-tip js-arch-tip" role="status"></div>
         </div>
       </div>
-      <div class="marquee" aria-hidden="true"><div class="marquee-inner js-marquee"></div></div>
     </section>
+
+    <div class="marquee" aria-hidden="true"><div class="marquee-inner js-marquee"></div></div>
 
     <!-- 04 CREDENTIALS -->
     <section id="credentials" class="section credentials" data-label="certs">
