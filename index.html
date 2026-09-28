@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nam Nguyen Nhat — Senior Software Engineer</title>
+  <meta name="description" content="Nam Nguyen Nhat — Senior Software Engineer in Hanoi. Backend, cloud and DevOps: Go, Kubernetes, AWS, gRPC, CI/CD." />
+  <meta name="theme-color" content="#050608" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Nam Nguyen Nhat — Senior Software Engineer" />
+  <meta property="og:description" content="Backend · Cloud · DevOps. Go, Kubernetes, AWS, gRPC, CI/CD." />
+  <meta property="og:url" content="https://nhatnam1507.github.io/" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050608'/%3E%3Ctext x='50%25' y='56%25' text-anchor='middle' dominant-baseline='middle' font-family='monospace' font-weight='700' font-size='30' fill='%232ef2b0'%3E%3E_%3C/text%3E%3C/svg%3E" />
+  <link rel="preload" href="assets/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/GeistMono-Variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/css/fonts.css" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Nam Nguyen Nhat",
+    "jobTitle": "Senior Software Engineer",
+    "address": { "@type": "PostalAddress", "addressLocality": "Hanoi", "addressCountry": "VN" },
+    "sameAs": ["https://github.com/nhatnam1507", "https://www.linkedin.com/in/nhatnam1507"]
+  }
+  </script>
+</head>
+<body>
+  <!-- boot sequence -->
+  <div id="boot" aria-hidden="true">
+    <pre class="boot-log"></pre>
+    <div class="boot-bar"><span></span></div>
+  </div>
+
+  <canvas id="webgl" aria-hidden="true"></canvas>
+  <div class="fx-grid" aria-hidden="true"></div>
+  <div class="fx-vignette" aria-hidden="true"></div>
+  <div class="fx-noise" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><span></span></div>
+
+  <header class="nav">
+    <a class="logo" href="#hero" data-scroll-to>
+      <span class="logo-prompt">nam@dev</span><span class="logo-path">:~$</span><span class="caret"></span>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#about" data-scroll-to><span>01</span>about</a>
+      <a href="#experience" data-scroll-to><span>03</span>experience</a>
+      <a href="#stack" data-scroll-to><span>04</span>stack</a>
+      <a href="#credentials" data-scroll-to><span>05</span>certs</a>
+      <a href="#contact" data-scroll-to><span>06</span>contact</a>
+    </nav>
+    <a class="btn btn-primary btn-sm js-export" href="assets/cv/Nam_Nguyen_Nhat_CV.pdf" download>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" /></svg>
+      <span>Export CV</span>
+    </a>
+  </header>
+
+  <!-- fixed HUD -->
+  <div class="hud hud-left" aria-hidden="true">
+    <div class="hud-index"><span class="hud-num">00</span><span class="hud-sep">/</span><span class="hud-total">06</span></div>
+    <div class="hud-label">init</div>
+  </div>
+  <div class="hud hud-right" aria-hidden="true">
+    <div class="hud-track"><span class="hud-fill"></span></div>
+    <div class="hud-pct">000%</div>
+  </div>
+  <div class="hud hud-bottom" aria-hidden="true">
+    <span class="hud-coords">x:+0.000 y:+0.000</span>
+    <span class="hud-shape">mesh: core</span>
+    <span class="hud-fps">-- fps</span>
+  </div>
+
+  <main id="main">
+    <!-- 00 HERO -->
+    <section id="hero" class="section hero" data-label="init">
+      <div class="container">
+        <p class="eyebrow reveal-hero">
+          <span class="pulse"></span> online · Hanoi, VN · UTC+7
+        </p>
+        <h1 class="hero-name">
+          <span class="line"><span class="scramble" data-text="NAM">NAM</span></span>
+          <span class="line line-sm"><span class="scramble outline" data-text="NGUYEN NHAT">NGUYEN NHAT</span></span>
+        </h1>
+        <p class="hero-role reveal-hero">
+          <span class="tag">Senior Software Engineer</span>
+          <span class="role-sep">//</span>
+          <span class="muted">Backend · Cloud · DevOps</span>
+        </p>
+
+        <div class="term term-hero reveal-hero" role="img" aria-label="Terminal: whoami">
+          <div class="term-bar"><i></i><i></i><i></i><span>zsh — ~/nam</span></div>
+          <pre class="term-body"><code class="js-typer" data-lines='[
+            {"p":"$ ","t":"whoami"},
+            {"o":"nam — ships Go services, Kubernetes clusters & CI/CD pipelines"},
+            {"p":"$ ","t":"uptime --career"},
+            {"o":"__YEARS__ years · 3 companies · 7 roles · still shipping"}
+          ]'></code></pre>
+        </div>
+
+        <div class="cta reveal-hero">
+          <a class="btn btn-primary js-export" href="assets/cv/Nam_Nguyen_Nhat_CV.pdf" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" /></svg>
+            <span>Export CV.pdf</span>
+          </a>
+          <a class="btn btn-ghost" href="#experience" data-scroll-to>
+            <span>git log --career</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" /></svg>
+          </a>
+        </div>
+      </div>
+      <div class="scroll-hint" aria-hidden="true"><span>scroll</span><i></i></div>
+    </section>
+
+    <!-- 01 ABOUT: pinned word-by-word reveal -->
+    <section id="about" class="section about" data-label="about">
+      <div class="container about-inner">
+        <p class="kicker"><span>01</span> // about</p>
+        <p class="about-text js-words">
+          I build the backend and infrastructure that products stand on. <em>__YEARS__ years</em> across the full software life cycle — from C/C++ engines at Toshiba to <em>Go microservices</em>, <em>Kubernetes</em> clusters and <em>AWS</em> pipelines today. Creative problem-solver, calm under pressure, and driven to ship software that meets — and exceeds — expectations.
+        </p>
+      </div>
+    </section>
+
+    <!-- 02 STATS -->
+    <section id="stats" class="section stats" data-label="metrics">
+      <div class="container">
+        <p class="kicker"><span>02</span> // metrics</p>
+        <h2 class="h2 split">Numbers from the <span class="grad">logs</span>.</h2>
+        <div class="stat-grid">
+          <article class="stat">
+            <div class="stat-num"><span class="js-count" data-to="__YEARS__">0</span><sup>+</sup></div>
+            <div class="stat-label">years shipping production software</div>
+            <div class="stat-meta">since 2020.09</div>
+          </article>
+          <article class="stat">
+            <div class="stat-num"><span class="js-count" data-to="90">0</span><sup>%</sup></div>
+            <div class="stat-label">code coverage after test refactor</div>
+            <div class="stat-meta">go test · testify</div>
+          </article>
+          <article class="stat">
+            <div class="stat-num"><sup>+</sup><span class="js-count" data-to="20">0</span><sup>%</sup></div>
+            <div class="stat-label">throughput via C++ thread-pool redesign</div>
+            <div class="stat-meta">scada · industrial</div>
+          </article>
+          <article class="stat">
+            <div class="stat-num"><span class="js-count" data-to="2">0</span><sup>×</sup></div>
+            <div class="stat-label">AWS certifications</div>
+            <div class="stat-meta">SAA · CCP</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 EXPERIENCE: pinned horizontal track -->
+    <section id="experience" class="section experience" data-label="experience">
+      <div class="exp-pin">
+        <div class="container exp-head">
+          <p class="kicker"><span>03</span> // experience</p>
+          <h2 class="h2">git log <span class="grad">--career</span></h2>
+          <div class="exp-progress"><span></span></div>
+        </div>
+        <div class="exp-viewport">
+          <ol class="exp-track js-exp-track"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 STACK -->
+    <section id="stack" class="section stack" data-label="stack">
+      <div class="container">
+        <p class="kicker"><span>04</span> // stack</p>
+        <h2 class="h2 split">Tools of the <span class="grad">trade</span>.</h2>
+        <div class="stack-grid">
+          <div class="term term-stack">
+            <div class="term-bar"><i></i><i></i><i></i><span>stack.yaml</span></div>
+            <pre class="term-body"><code class="js-yaml"></code></pre>
+          </div>
+          <div class="skill-groups js-skill-groups"></div>
+        </div>
+      </div>
+      <div class="marquee" aria-hidden="true"><div class="marquee-inner js-marquee"></div></div>
+    </section>
+
+    <!-- 05 CREDENTIALS -->
+    <section id="credentials" class="section credentials" data-label="certs">
+      <div class="container">
+        <p class="kicker"><span>05</span> // credentials</p>
+        <h2 class="h2 split">Verified <span class="grad">&amp; certified</span>.</h2>
+        <div class="cert-grid js-certs"></div>
+        <div class="edu js-edu"></div>
+      </div>
+    </section>
+
+    <!-- 06 CONTACT -->
+    <section id="contact" class="section contact" data-label="contact">
+      <div class="container">
+        <p class="kicker"><span>06</span> // contact</p>
+        <h2 class="contact-title">
+          <span class="line"><span>Let’s build</span></span>
+          <span class="line"><span class="grad">something solid.</span></span>
+        </h2>
+        <div class="contact-links js-contact"></div>
+        <div class="cta">
+          <a class="btn btn-primary btn-lg js-export" href="assets/cv/Nam_Nguyen_Nhat_CV.pdf" download>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" /></svg>
+            <span>Export CV.pdf</span>
+          </a>
+          <a class="btn btn-ghost" href="cv.html" target="_blank" rel="noopener">
+            <span>view print template</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7m0 0H8m9 0v9" /></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <span>© <span class="js-year">2026</span> Nam Nguyen Nhat</span>
+      <span class="muted">three.js · gsap · github pages</span>
+      <span class="eof">[EOF]</span>
+    </div>
+  </footer>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/lenis.min.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>
