@@ -2,7 +2,7 @@
 
 Personal portfolio of **Nam Nguyen Nhat**: a scrollytelling site with a Three.js particle scene, plus a printable CV that exports to PDF.
 
-- `index.html`: the portfolio. A particle "core" changes shape per section (core → helix → galaxy → lattice → network → knot → portal) as you scroll.
+- `index.html`: the portfolio. A particle "core" changes shape per section (core → helix → lattice → network → knot → portal) as you scroll.
 - `cv.html`: an A4 CV template that renders from the same data. It has **Print / Save as PDF** and **Download PDF** buttons.
 - `assets/cv/Nam_Nguyen_Nhat_CV.pdf`: the pre-built PDF behind every **Export CV** button.
 

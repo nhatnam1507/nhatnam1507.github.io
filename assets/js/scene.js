@@ -49,22 +49,6 @@ function helix(n) {
   return out;
 }
 
-function galaxy(n) {
-  const out = new Float32Array(n * 3);
-  const arms = 4;
-  for (let i = 0; i < n; i++) {
-    const r = Math.pow(Math.random(), 1.6) * 3.2;
-    const arm = (i % arms) / arms * TAU;
-    const spin = r * 1.25;
-    const spread = 0.35 * (1 - r / 4);
-    const rx = Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1) * spread * r;
-    const ry = Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1) * spread * 0.6;
-    const rz = Math.pow(Math.random(), 3) * (Math.random() < 0.5 ? 1 : -1) * spread * r;
-    out.set([Math.cos(arm + spin) * r + rx, ry, Math.sin(arm + spin) * r + rz], i * 3);
-  }
-  return out;
-}
-
 // 3x3x3 lattice of cube wireframes — "infrastructure"
 function lattice(n) {
   const out = new Float32Array(n * 3);
@@ -170,8 +154,7 @@ function mulberry32(a) {
 // x/y offset (in world units at z=0), scale, tilt and overall opacity per section
 export const SHAPES = [
   { name: 'core',    gen: sphere,    x: 2.5,  y: 0,    s: 1.0,  tilt: 0.25, o: 1.0 },
-  { name: 'helix',   gen: helix,     x: 2.6,  y: 0,    s: 0.95, tilt: 0.45, o: 0.9 },
-  { name: 'galaxy',  gen: galaxy,    x: 0,    y: -0.2, s: 1.05, tilt: 1.05, o: 0.75 },
+  { name: 'helix',   gen: helix,     x: 0,    y: 0,    s: 1.1,  tilt: 0.45, o: 0.35 }, // behind the dashboard
   { name: 'lattice', gen: lattice,   x: 0,    y: 0,    s: 1.0,  tilt: 0.55, o: 0.4 },
   { name: 'network', gen: network,   x: 2.4,  y: 0,    s: 1.0,  tilt: 0.3,  o: 0.95 },
   { name: 'knot',    gen: torusKnot, x: -2.4, y: 0,    s: 0.95, tilt: 0.2,  o: 0.9 },

@@ -47,11 +47,10 @@
     </a>
     <nav class="nav-links" aria-label="Sections">
       <a href="#about" data-scroll-to><span>01</span>about</a>
-      <a href="#stats" data-scroll-to><span>02</span>metrics</a>
-      <a href="#experience" data-scroll-to><span>03</span>experience</a>
-      <a href="#stack" data-scroll-to><span>04</span>stack</a>
-      <a href="#credentials" data-scroll-to><span>05</span>certs</a>
-      <a href="#contact" data-scroll-to><span>06</span>contact</a>
+      <a href="#experience" data-scroll-to><span>02</span>experience</a>
+      <a href="#stack" data-scroll-to><span>03</span>stack</a>
+      <a href="#credentials" data-scroll-to><span>04</span>certs</a>
+      <a href="#contact" data-scroll-to><span>05</span>contact</a>
     </nav>
     <a class="btn btn-primary btn-sm js-export" href="assets/cv/Nam_Nguyen_Nhat_CV.pdf" download>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" /></svg>
@@ -115,52 +114,95 @@
       <div class="scroll-hint" aria-hidden="true"><span>scroll</span><i></i></div>
     </section>
 
-    <!-- 01 ABOUT: pinned word-by-word reveal -->
+    <!-- 01 ABOUT: Nam, monitored like a production service. Panels assemble on
+         scroll (pinned on desktop), then keep running live while in view. -->
     <section id="about" class="section about" data-label="about">
       <div class="container about-inner">
-        <p class="kicker"><span>01</span> // about</p>
-        <p class="about-text js-words">
-          I build the backend and infrastructure that products stand on. <em>__YEARS__ years</em> across the full software life cycle — from C/C++ engines at Toshiba to <em>Go microservices</em>, <em>Kubernetes</em> clusters and <em>AWS</em> pipelines today. Creative problem-solver, calm under pressure, and driven to ship software that meets — and exceeds — expectations.
-        </p>
-      </div>
-    </section>
+        <div class="dash js-dash">
+          <header class="dash-top">
+            <div>
+              <p class="kicker"><span>01</span> // about</p>
+              <h2 class="dash-h">nam-prod <span>/ observability</span></h2>
+            </div>
+            <div class="dash-meta">
+              <span class="dash-status"><i></i> all systems nominal</span>
+              <span class="dash-chip">⏱ last __YEARS__ years</span>
+              <span class="dash-chip js-clock">Hanoi --:--:--</span>
+            </div>
+          </header>
 
-    <!-- 02 STATS -->
-    <section id="stats" class="section stats" data-label="metrics">
-      <div class="container">
-        <p class="kicker"><span>02</span> // metrics</p>
-        <h2 class="h2 split">Numbers from the <span class="grad">logs</span>.</h2>
-        <div class="stat-grid">
-          <article class="stat">
-            <div class="stat-num"><span class="js-count" data-to="__YEARS__">0</span><sup>+</sup></div>
-            <div class="stat-label">years shipping production software</div>
-            <div class="stat-meta">since 2020.09</div>
-          </article>
-          <article class="stat">
-            <div class="stat-num"><span class="js-count" data-to="90">0</span><sup>%</sup></div>
-            <div class="stat-label">code coverage after test refactor</div>
-            <div class="stat-meta">go test · testify</div>
-          </article>
-          <article class="stat">
-            <div class="stat-num"><sup>+</sup><span class="js-count" data-to="20">0</span><sup>%</sup></div>
-            <div class="stat-label">throughput via C++ thread-pool redesign</div>
-            <div class="stat-meta">scada · industrial</div>
-          </article>
-          <article class="stat">
-            <div class="stat-num"><span class="js-count" data-to="2">0</span><sup>×</sup></div>
-            <div class="stat-label">AWS certifications</div>
-            <div class="stat-meta">SAA · CCP</div>
-          </article>
+          <div class="dash-grid">
+            <article class="panel p-sli">
+              <div class="sli"><b><span class="js-sli" data-to="90">0</span><small>%</small></b><span>test coverage<em>go test · testify</em></span></div>
+              <div class="sli"><b><small>+</small><span class="js-sli" data-to="20">0</span><small>%</small></b><span>SCADA throughput<em>C++ thread pool</em></span></div>
+              <div class="sli"><b><span class="js-sli" data-to="2">0</span><small>×</small></b><span>AWS certified<em>SAA · CCP</em></span></div>
+              <div class="sli"><b><span class="js-sli" data-to="7">0</span></b><span>roles shipped<em>3 companies</em></span></div>
+            </article>
+            <article class="panel p-readme">
+              <h3 class="panel-h">README.md</h3>
+              <pre class="readme js-readme"></pre>
+            </article>
+
+            <article class="panel p-uptime">
+              <h3 class="panel-h">career.uptime</h3>
+              <div class="uptime-big js-uptime">0y 0m</div>
+              <div class="uptime-sec"><span class="js-uptime-s">0</span> s and counting</div>
+              <svg class="spark" viewBox="0 0 200 36" preserveAspectRatio="none" aria-hidden="true">
+                <path class="spark-fill js-spark-fill" d="" />
+                <path class="spark-line js-spark" pathLength="1" d="" />
+              </svg>
+              <small class="panel-foot">0 unplanned outages<sup>*</sup> <em>*that we talk about</em></small>
+            </article>
+
+            <article class="panel p-gauge">
+              <h3 class="panel-h">caffeine.level</h3>
+              <svg class="gauge" viewBox="0 0 160 92" aria-hidden="true">
+                <path class="gauge-bg" d="M 16 80 A 64 64 0 0 1 144 80" />
+                <path class="gauge-fg js-gauge-arc" pathLength="1" d="M 16 80 A 64 64 0 0 1 144 80" />
+                <g class="gauge-needle js-needle"><line x1="80" y1="80" x2="80" y2="28" /><circle cx="80" cy="80" r="5" /></g>
+              </svg>
+              <div class="gauge-val"><b class="js-gauge-val">0</b><small>%</small> <span class="js-gauge-state">booting</span></div>
+            </article>
+
+            <article class="panel p-htop">
+              <h3 class="panel-h">htop <span>— brain.processes</span></h3>
+              <div class="htop js-htop"></div>
+            </article>
+
+            <article class="panel p-chart">
+              <h3 class="panel-h">bugs vs coffee <span>— today</span></h3>
+              <svg class="chart js-chart" viewBox="0 0 320 128" aria-hidden="true"></svg>
+              <div class="chart-legend">
+                <span class="lg-coffee"><i></i>coffee</span>
+                <span class="lg-bugs"><i></i>open bugs</span>
+                <span class="muted">r = −0.97 · causation: probably</span>
+              </div>
+            </article>
+
+            <article class="panel p-heat">
+              <h3 class="panel-h">git.commits <span>— last 52 weeks</span></h3>
+              <canvas class="heat js-heat" aria-hidden="true"></canvas>
+              <div class="heat-foot">
+                <span>less <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> more</span>
+                <span class="muted">weekends: touching grass 🌱</span>
+              </div>
+            </article>
+
+            <article class="panel p-logs">
+              <h3 class="panel-h">tail -f <span>/var/log/nam.log</span></h3>
+              <div class="logs js-logs"></div>
+            </article>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 03 EXPERIENCE: pinned, scroll-scrubbed career timeline -->
+    <!-- 02 EXPERIENCE: pinned, scroll-scrubbed career timeline -->
     <section id="experience" class="section experience" data-label="experience">
       <div class="container exp-inner">
         <div class="exp-head">
           <div>
-            <p class="kicker"><span>03</span> // experience</p>
+            <p class="kicker"><span>02</span> // experience</p>
             <h2 class="exp-title">git log <span class="grad">--graph</span></h2>
           </div>
           <div class="exp-side" aria-hidden="true">
@@ -175,10 +217,10 @@
       </div>
     </section>
 
-    <!-- 04 STACK -->
+    <!-- 03 STACK -->
     <section id="stack" class="section stack" data-label="stack">
       <div class="container">
-        <p class="kicker"><span>04</span> // stack</p>
+        <p class="kicker"><span>03</span> // stack</p>
         <h2 class="h2 split">Tools of the <span class="grad">trade</span>.</h2>
         <div class="stack-grid">
           <div class="term term-stack">
@@ -191,20 +233,20 @@
       <div class="marquee" aria-hidden="true"><div class="marquee-inner js-marquee"></div></div>
     </section>
 
-    <!-- 05 CREDENTIALS -->
+    <!-- 04 CREDENTIALS -->
     <section id="credentials" class="section credentials" data-label="certs">
       <div class="container">
-        <p class="kicker"><span>05</span> // credentials</p>
+        <p class="kicker"><span>04</span> // credentials</p>
         <h2 class="h2 split">Verified <span class="grad">&amp; certified</span>.</h2>
         <div class="cert-grid js-certs"></div>
         <div class="edu js-edu"></div>
       </div>
     </section>
 
-    <!-- 06 CONTACT -->
+    <!-- 05 CONTACT -->
     <section id="contact" class="section contact" data-label="contact">
       <div class="container">
-        <p class="kicker"><span>06</span> // contact</p>
+        <p class="kicker"><span>05</span> // contact</p>
         <h2 class="contact-title">
           <span class="line"><span>Let’s build</span></span>
           <span class="line"><span class="grad">something solid.</span></span>

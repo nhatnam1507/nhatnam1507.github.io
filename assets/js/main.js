@@ -1,5 +1,6 @@
 import { cv, yearsOfExperience } from './data.js';
 import { createScene, SHAPES } from './scene.js';
+import { setupAbout } from './about.js';
 
 const { gsap, ScrollTrigger, Lenis } = window;
 gsap.registerPlugin(ScrollTrigger);
@@ -306,27 +307,6 @@ function splitWords(el) {
   return $$('.w > span', el);
 }
 
-// wrap every word of the about paragraph into .word (em words get .em)
-function splitReading(el) {
-  const words = [];
-  const frag = document.createDocumentFragment();
-  const addWords = (text, em) => {
-    text.split(/(\s+)/).forEach((part) => {
-      if (!part) return;
-      if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
-      const s = document.createElement('span');
-      s.className = 'word' + (em ? ' em' : '');
-      s.textContent = part;
-      frag.appendChild(s);
-      words.push(s);
-    });
-  };
-  [...el.childNodes].forEach((n) => addWords(n.textContent, n.nodeType === Node.ELEMENT_NODE));
-  el.innerHTML = '';
-  el.appendChild(frag);
-  return words;
-}
-
 /* ==========================================================================
    3. Boot sequence
    ========================================================================== */
@@ -432,27 +412,6 @@ function heroIntro() {
   return tl;
 }
 
-function setupAbout() {
-  const el = $('.js-words');
-  const words = splitReading(el);
-  if (reducedMotion) { words.forEach((w) => w.classList.add('lit')); return; }
-  let lit = 0;
-  ScrollTrigger.create({
-    trigger: '#about',
-    start: 'top top',
-    end: '+=140%',
-    pin: true,
-    scrub: true,
-    onUpdate(self) {
-      const next = Math.min(words.length, Math.round(self.progress * words.length * 1.08));
-      if (next === lit) return;
-      const [a, b, on] = next > lit ? [lit, next, true] : [next, lit, false];
-      for (let i = a; i < b; i++) words[i].classList.toggle('lit', on);
-      lit = next;
-    },
-  });
-}
-
 // Pinned timeline: scrolling moves a playhead through time, bars draw in
 // behind it and the matching role card swaps in. Only transforms/classes are
 // written per update, and only when they change.
@@ -542,26 +501,6 @@ function setupReveals() {
 
   $$('.kicker').forEach((el) => {
     gsap.from(el, { opacity: 0, x: -20, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: el, start: 'top 90%' } });
-  });
-
-  // counters
-  $$('.stat').forEach((stat, i) => {
-    const num = $('.js-count', stat);
-    const to = Number(num.dataset.to);
-    const obj = { v: 0, p: 0 };
-    gsap.from(stat, { opacity: 0, y: 40, duration: 0.9, delay: i * 0.08, ease: 'power3.out', scrollTrigger: { trigger: '.stat-grid', start: 'top 80%' } });
-    gsap.to(obj, {
-      v: to,
-      p: 1,
-      duration: 1.8,
-      delay: 0.2 + i * 0.1,
-      ease: 'power2.out',
-      scrollTrigger: { trigger: '.stat-grid', start: 'top 80%' },
-      onUpdate() {
-        num.textContent = Math.round(obj.v);
-        stat.style.setProperty('--p', obj.p);
-      },
-    });
   });
 
   // stack
@@ -755,7 +694,7 @@ async function init() {
   const lenis = setupSmoothScroll();
   lenis?.stop();
   setupAnchors(lenis, scene);
-  setupAbout();
+  setupAbout({ gsap, ScrollTrigger, years: YEARS, careerStart: cv.careerStart, reducedMotion });
   setupExperience();
   setupReveals();
   setupTilt();
