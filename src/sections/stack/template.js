@@ -13,21 +13,12 @@ const EXTRAS = {
   idp: `<div class="jwt" aria-hidden="true"><code class="js-jwt"><i class="jwt-h">eyJhbGciOiJSUzI1NiJ9</i>.<i class="jwt-p">eyJzdWIiOiJuYW0ifQ</i>.<i class="jwt-s">kX9fQ2vLr8</i></code><span class="jwt-ok js-jwt-ok">✓ verified</span></div>`,
 };
 
-// items with a row label (e.g. identity: provider vs mechanism) are grouped
-const nodes = (items, id) => {
-  const keyed = items.map((it, i) => [it, `${id}:${i}`]);
-  const rows = [...new Set(items.map((it) => it[3]))];
-  if (!rows[0]) return `<div class="ab-nodes">${keyed.map(([it, k]) => node(it, k)).join('')}</div>`;
-  return rows.map((row) => `
-      <div class="ab-row"><small>${row}</small><div class="ab-nodes">${keyed.filter(([it]) => it[3] === row).map(([it, k]) => node(it, k)).join('')}</div></div>`).join('');
-};
-
 const box = (id) => {
   const b = BOXES[id];
   return `
     <div class="ab ab-${id}" data-box="${id}">
       <div class="ab-h"><span>#</span> ${b.title} <em>${b.sub}</em></div>
-      ${nodes(b.items, id)}
+      <div class="ab-nodes">${b.items.map((it, i) => node(it, `${id}:${i}`)).join('')}</div>
       ${EXTRAS[id] || ''}
     </div>`;
 };
