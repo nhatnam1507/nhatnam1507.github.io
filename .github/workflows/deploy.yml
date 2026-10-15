@@ -1,11 +1,15 @@
-# On every push to main: re-check the CV, build a fresh PDF from
-# src/content/profile.js and publish the site to GitHub Pages.
+# On every push to main: run the same checks as CI, build the static export,
+# render a fresh CV PDF into it and publish out/ to GitHub Pages. A weekly run
+# keeps build-time dates (years of experience, "Present" roles) fresh between
+# content changes.
 # Requires Settings → Pages → Source: "GitHub Actions" (see README → CI/CD).
 name: Deploy
 
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '17 3 * * 1' # Mondays 03:17 UTC
   workflow_dispatch:
 
 permissions:
@@ -22,29 +26,24 @@ jobs:
   build:
     name: Build site & CV
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
 
       - uses: ./.github/actions/setup
 
-      - name: Checks (CV validation, tests, preload list)
+      - name: Checks (CV validation, format, lint, typecheck, tests, build)
         run: npm run check
 
-      - name: Render CV to PDF
-        run: npm run pdf # writes assets/cv/Nam_Nguyen_Nhat_CV.pdf
-
-      - name: Assemble site
-        run: |
-          mkdir -p _site
-          cp -r index.html cv.html .nojekyll assets src _site/
-          ls -la _site _site/assets/cv
+      # The PDF in public/assets/cv is only a local copy: always publish a fresh one.
+      - name: Render fresh CV PDF into the export
+        run: npm run pdf -- --out out/assets/cv/Nam_Nguyen_Nhat_CV.pdf
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: out
 
   deploy:
     name: Publish to GitHub Pages

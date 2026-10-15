@@ -1,0 +1,24 @@
+/* Portfolio CSS entry: the style "include" list, in cascade order.
+   shared primitives → shell chrome → one file per section (same order as the page). */
+
+@import '../shared/styles/fonts.css';
+@import '../shared/styles/base.css';
+@import '../shared/styles/ui.css';
+
+@import '../shell/chrome/backdrop.css';
+@import '../shell/chrome/boot.css';
+@import '../shell/chrome/curtain.css';
+@import '../shell/chrome/cursor.css';
+@import '../shell/chrome/nav.css';
+@import '../shell/chrome/hud.css';
+
+@import '../sections/hero/hero.css';
+@import '../sections/about/about.css';
+@import '../sections/experience/experience.css';
+@import '../sections/stack/stack.css';
+@import '../sections/marquee/marquee.css';
+@import '../sections/credentials/credentials.css';
+@import '../sections/contact/contact.css';
+
+@import '../shell/chrome/footer.css';
+@import '../shell/chrome/toast.css';

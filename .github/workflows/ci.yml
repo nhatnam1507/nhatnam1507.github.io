@@ -1,5 +1,8 @@
-# Runs on every pull request. Make "CV & site checks" a required status
-# check on main so an invalid CV can't be merged (see README → CI/CD).
+# Runs on every pull request (any base branch). Each check is its own step so
+# a red step names the failure. Make "CV & site checks" a required status
+# check on main (and on the migration integration branch) so nothing merges
+# with an invalid CV, lint errors, failing tests or a broken site (see
+# README → CI/CD).
 name: CI
 
 on:
@@ -17,41 +20,89 @@ jobs:
   checks:
     name: CV & site checks
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
 
       - uses: ./.github/actions/setup
 
-      - name: Validate CV source of truth (src/content/profile.js)
+      - name: Validate CV source of truth (src/content/profile.ts)
+        id: validate
         run: npm run validate
 
-      - name: Unit tests
+      - name: Format check (Prettier)
+        id: format
+        run: npm run format:check
+
+      - name: Lint (ESLint, zero warnings)
+        id: lint
+        run: npm run lint
+
+      - name: Typecheck
+        id: typecheck
+        run: npm run typecheck
+
+      - name: Unit tests (Vitest)
+        id: unit
         run: npm test
 
-      - name: Module preload list is up to date
-        run: node scripts/preload.mjs --check
+      - name: Build static site (out/)
+        id: build
+        run: npm run build
 
-      - name: Render CV to PDF
+      - name: Render CV PDF from the built site
+        id: pdf
         run: npm run pdf -- --out dist/Nam_Nguyen_Nhat_CV.pdf
 
       - name: Upload CV preview
-        uses: actions/upload-artifact@v6
+        id: cv-preview
+        uses: actions/upload-artifact@v4
         with:
           name: cv-preview
           path: dist/Nam_Nguyen_Nhat_CV.pdf
-          retention-days: 14
+          if-no-files-found: error
+
+      - name: End-to-end smoke tests (Playwright)
+        id: e2e
+        run: npm run e2e
+
+      - name: Upload Playwright report
+        if: failure() && steps.e2e.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: dist/e2e/report
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Summary
         if: always()
+        env:
+          VALIDATE: ${{ steps.validate.outcome }}
+          FORMAT: ${{ steps.format.outcome }}
+          LINT: ${{ steps.lint.outcome }}
+          TYPECHECK: ${{ steps.typecheck.outcome }}
+          UNIT: ${{ steps.unit.outcome }}
+          BUILD: ${{ steps.build.outcome }}
+          PDF: ${{ steps.pdf.outcome }}
+          CV_PREVIEW: ${{ steps.cv-preview.outcome }}
+          E2E: ${{ steps.e2e.outcome }}
         run: |
           {
-            echo "### CV checks"
-            if [ -f dist/Nam_Nguyen_Nhat_CV.pdf ]; then
-              echo "✅ \`src/content/profile.js\` is valid and the PDF renders."
-              echo ""
-              echo "Download the **cv-preview** artifact from this run to review the exact PDF that will be published."
-            else
-              echo "❌ See the failed step above; validation errors are annotated on \`src/content/profile.js\`."
-            fi
+            echo "### CV & site checks"
+            echo ""
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            echo "| Validate CV | $VALIDATE |"
+            echo "| Format (Prettier) | $FORMAT |"
+            echo "| Lint (ESLint) | $LINT |"
+            echo "| Typecheck | $TYPECHECK |"
+            echo "| Unit tests (Vitest) | $UNIT |"
+            echo "| Build | $BUILD |"
+            echo "| Render CV PDF | $PDF |"
+            echo "| Upload \`cv-preview\` | $CV_PREVIEW |"
+            echo "| End-to-end (Playwright) | $E2E |"
+            echo ""
+            echo "A red step names the failing check; lint and test failures are annotated on the PR diff."
+            echo "A failed end-to-end run uploads the \`playwright-report\` artifact (open index.html for traces)."
           } >> "$GITHUB_STEP_SUMMARY"
