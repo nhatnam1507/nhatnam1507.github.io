@@ -1,4 +1,4 @@
-// STUB (S0): replaced by the slice that ports legacy/src/sections/about/.
+// 01 // about: the dashboard section (markup in View.tsx, motion in behaviour.ts).
 import { defineSection } from '@/shell/contract';
 import { AboutView } from './View';
 
