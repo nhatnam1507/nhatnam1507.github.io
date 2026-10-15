@@ -1,14 +1,15 @@
 // Smoke tests for the portfolio page (/), run at desktop, mobile and with
-// reduced motion (see playwright.config.ts). Written against the section
-// contract, so they hold for stub sections and for the real ones.
+// reduced motion (see playwright.config.ts). Expectations come from the
+// section contract and registry, plus the legacy site's pinning behaviour.
 import type { Page } from '@playwright/test';
 import { MEDIA, NAV_HEIGHT } from '@/shared/env';
 import { pad2 } from '@/shared/dom';
 import type { SectionId } from '@/shell/contract';
 import { expect, expectedNavLinks, expectedSections, openPortfolio, test, waitForBoot } from './support';
 
-/** The sections the legacy site pins on desktop. Pinning anything else would be a regression. */
+/** The sections the legacy site pins on desktop (with reduced motion only the experience timeline pins). */
 const LEGACY_PINNED = ['about', 'experience', 'stack'] as const satisfies readonly SectionId[];
+const LEGACY_PINNED_REDUCED = ['experience'] as const satisfies readonly SectionId[];
 
 const isDesktop = (page: Page): Promise<boolean> => page.evaluate((query) => matchMedia(query).matches, MEDIA.desktop);
 
@@ -77,19 +78,13 @@ test('pinned sections get a pin-spacer on desktop and none on mobile', async ({ 
     expect(pinned, 'phones get enter animations, never pins').toEqual([]);
     return;
   }
-  // Which sections pin is up to their behaviours, so check the invariants only:
-  // each spacer wraps exactly one registry section, in page order, and only
-  // sections the legacy site pins. (Stub sections pin nothing: an empty list passes.)
-  const order = expectedSections.map((s) => s.id);
+  // Each spacer wraps exactly one section, and the pinned set matches the legacy site.
   const ids = pinned.map((spacer) => {
     expect(spacer.children).toHaveLength(1);
     return spacer.children[0];
   });
-  for (const id of ids) {
-    expect(order, `#${id} is a registry section`).toContain(id);
-    expect(LEGACY_PINNED, `#${id} is pinned by the legacy site`).toContain(id);
-  }
-  expect(ids, 'pins in registry order').toEqual(order.filter((id) => ids.includes(id)));
+  const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+  expect(ids, 'pinned sections, in registry order').toEqual([...(reduced ? LEGACY_PINNED_REDUCED : LEGACY_PINNED)]);
   for (const spacer of pinned) expect(spacer.parent).toBe('app');
 });
 
@@ -98,8 +93,10 @@ test('nav jumps land on their section', async ({ page }) => {
   await openPortfolio(page);
 
   const jumpTo = async (id: SectionId) => {
-    // A DOM click: the links collapse on phones, and the jump handler is a document-level listener.
-    await page.locator(`[data-scroll-to][href="#${id}"]`).first().dispatchEvent('click');
+    // A real click where the link is visible; phones collapse the nav links, so dispatch the click there.
+    const link = page.locator(`[data-scroll-to][href="#${id}"]`).first();
+    if (await link.isVisible()) await link.click();
+    else await link.dispatchEvent('click');
 
     await expect
       .poll(

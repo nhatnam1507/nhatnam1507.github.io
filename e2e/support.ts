@@ -34,40 +34,13 @@ export const test = base.extend<{ noPageErrors: void }>({
 export { expect };
 
 /**
- * The boot screen is done once #boot is gone, `hidden` or not displayed. The shell never removes
- * the node (React owns it); the runtime sets `hidden` or hides it with CSS.
- *
- * Known gap until S1 lands: the stub boot only sets the `hidden` attribute, and boot.css's
- * `#boot { display: flex }` overrides it, so the overlay stays painted. S1 must make `[hidden]`
- * win (e.g. `#boot[hidden] { display: none }`). Once it does, swap the poll below for
- * `expect(page.locator('#boot')).toBeHidden()`, which also checks that it is really invisible.
+ * The boot screen is done once #boot is hidden (the shell never removes the node: React owns it)
+ * and the body has left its booting state.
  */
 export async function waitForBoot(page: Page, timeout = 15_000): Promise<void> {
-  await expect
-    .poll(
-      () =>
-        page.evaluate(() => {
-          const boot = document.getElementById('boot');
-          if (!boot || boot.hidden) return true;
-          const style = getComputedStyle(boot);
-          return style.display === 'none' || style.visibility === 'hidden';
-        }),
-      { message: '#boot is hidden once the boot sequence ends', timeout },
-    )
-    .toBe(true);
+  await expect(page.locator('#boot'), '#boot is hidden once the boot sequence ends').toBeHidden({ timeout });
   await expect(page.locator('body')).not.toHaveClass(/\bis-booting\b/);
   await page.evaluate(() => document.fonts.ready);
-
-  const stillPainted = await page.evaluate(() => {
-    const boot = document.getElementById('boot');
-    return !!boot && getComputedStyle(boot).display !== 'none' && getComputedStyle(boot).visibility !== 'hidden';
-  });
-  if (stillPainted) {
-    test.info().annotations.push({
-      type: 'warning',
-      description: '#boot is marked hidden but still painted (CSS beats the hidden attribute); fix in S1.',
-    });
-  }
 }
 
 /** Open the portfolio and wait until the boot screen is gone. */

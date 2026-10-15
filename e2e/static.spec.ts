@@ -10,12 +10,9 @@ test('/cv.html loads without the portfolio chrome and reaches body.is-ready', as
   // The print layout must not load the portfolio's chrome or WebGL canvas (PLAN.md D7).
   await expect(page.locator('#webgl, .nav, #boot')).toHaveCount(0);
 
-  // Needs S9 (CV route): until the CvSheet/CvToolbar land, #cv is an empty stub that never
-  // sets is-ready. Once the sheet renders, scripts/build-pdf.ts depends on this contract.
-  const sheetRendered = (await page.locator('#cv > *').count()) > 0;
-  if (sheetRendered) {
-    await expect(page.locator('body')).toHaveClass(/\bis-ready\b/, { timeout: 15_000 });
-  }
+  // scripts/build-pdf.ts waits for this signal (fonts loaded) before printing.
+  await expect(page.locator('#cv > *').first()).toBeVisible();
+  await expect(page.locator('body')).toHaveClass(/\bis-ready\b/, { timeout: 15_000 });
 });
 
 test('the PDF link on the portfolio points at a PDF that is served', async ({ page, request }) => {
