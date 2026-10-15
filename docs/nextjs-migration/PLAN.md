@@ -42,6 +42,7 @@ Move the portfolio from hand-wired static HTML + ES modules to **Next.js (App Ro
 | D11 | **Tests:** Vitest for unit tests (domain, profile rules, hero commands, pure section logic). Playwright for an e2e smoke test against the built `out/`. Scripts run with `tsx`. | Vitest runs TS + path aliases with no setup. Playwright is already a dependency. |
 | D12 | **Lint/format:** ESLint flat config (`eslint-config-next` + `typescript-eslint`) and Prettier (single quotes, semicolons, 2 spaces, `printWidth: 120`). | Next 16 removed `next lint`. One formatter keeps diffs from ten agents consistent. |
 | D13 | **Legacy code moves to `legacy/` in S0** and stays runnable (`npx http-server legacy -p 8081`) as the reference implementation until S11 deletes it. | Next treats `src/app/page.js` as a route, which collides with the legacy shell. Agents port from `legacy/src/...` and compare against the running legacy site. |
+| D14 | **Lint and tests gate every PR, from S0 onwards.** CI runs format check, lint (`--max-warnings 0`), typecheck, unit tests, build and (from S10) e2e as **separate named steps** on every pull request, including slice PRs into `migrate/nextjs`. A PR template makes each author confirm the same commands passed locally. | A red step names the failure at a glance. Gating from S0, not S10, means no wave-1 PR can merge with lint errors or failing tests, even before S10 lands. |
 
 ---
 
@@ -267,14 +268,20 @@ Tasks:
 10. Add `(portfolio)` and `(print)` layouts plus `shared/metadata.ts`: title, description, OG, theme-color, the inline SVG icon, font preloads and the JSON-LD from `legacy/index.html`. Add a stub `(print)/cv/page.tsx`.
 11. Add scripts:
     - `dev`, `build`, `start` (`npx serve out`)
-    - `lint`, `typecheck` (`tsc --noEmit`), `test` (`vitest run`)
+    - `format:check` (`prettier --check .`), `format` (`prettier --write .`)
+    - `lint` (`eslint . --max-warnings 0`), `typecheck` (`tsc --noEmit`), `test` (`vitest run`)
     - `validate` (`tsx scripts/validate-profile.ts`)
-    - `check` (validate + lint + typecheck + test + build)
+    - `check` (validate + format:check + lint + typecheck + test + build): the one command authors run before pushing
     - `pdf`, `e2e` (placeholders that later slices fill in)
-12. Keep the old CI working on the integration branch: point the workflows at `npm run check` and leave the PDF step disabled until S9 lands. S10 rewrites the workflows.
+12. Put the quality gate (D14) in place before wave 1 starts:
+    - Rewrite `.github/workflows/ci.yml` so the **CV & site checks** job runs on every `pull_request` (any base branch) with one step per check: validate CV, format check, lint, typecheck, unit tests, build. Leave the PDF and e2e steps out until S9 and S10 add them.
+    - Point `deploy.yml` at `npm run check` (it only runs on `main`, so it stays inactive until cutover).
+    - Add `.github/pull_request_template.md` with a checklist: `npm run check` green locally, tests added for new pure logic, only owned paths touched, legacy-vs-new screenshots attached, "Promote to shared" list.
+    - Ask the repository owner to add a ruleset on `migrate/nextjs` requiring **CV & site checks** to pass before merging, the same as `main`.
 
 Acceptance:
-- `npm run check` passes.
+- `npm run check` passes, and CI on the S0 PR shows each check as its own green step.
+- A deliberate lint error and a deliberate failing test each turn CI red (try both on a throwaway commit, then drop it).
 - `out/index.html` contains every `<section id>` in registry order with the correct kicker numbers.
 - `out/cv.html` exists.
 - Dev server shows no hydration warnings.
@@ -402,7 +409,7 @@ Acceptance:
 
 Tasks:
 1. Setup action: Node 22, `npm ci` with the Playwright browser download skipped, Chrome via `CHROMIUM_PATH`.
-2. `ci.yml` (job name **CV & site checks**, unchanged, because branch protection depends on it): `npm run check`, then `npm run pdf -- --out dist/...`, upload `cv-preview`, then `npm run e2e`.
+2. `ci.yml`: extend the S0 quality gate, keeping the job name **CV & site checks** (branch protection depends on it) and the separate steps. The final order is: validate CV → format check → lint → typecheck → unit tests (Vitest's GitHub reporter, so failures are annotated on the PR diff) → build → render PDF → upload `cv-preview` → e2e (upload the Playwright report as an artifact on failure). Update the step summary to list each check's result.
 3. `deploy.yml`: `npm run check`, then `npm run pdf -- --out out/assets/cv/Nam_Nguyen_Nhat_CV.pdf`, then upload `out/` with `upload-pages-artifact`. Add `schedule: cron` weekly (D9).
 4. `e2e/` (Playwright against `out/` served statically), at desktop 1440×900 and mobile 390×844, and with reduced motion:
    - no console errors
@@ -455,6 +462,11 @@ Tasks:
 - Exported functions declare their parameter and return types. Prefer `satisfies` for config objects so literal types survive.
 - Use `as const` for content tables (`STEPS`, `WIRES`, `LEVELS`…).
 
+### Quality gate (D14)
+- Run `npm run check` before every push. It must pass with zero lint warnings; don't silence rules with `eslint-disable` (if a rule is wrong for the codebase, raise it with the integrator instead).
+- A PR merges only when the **CV & site checks** job is green on its latest commit. A red step is fixed in the same PR, never skipped, retried blindly or deferred.
+- Never skip, disable or delete a test to get green (`test.skip`, `.only`, commenting out assertions).
+
 ### Testing
 - Any pure logic you touch or extract gets a Vitest test under `tests/<area>/`.
 - Domain tests use `tests/fixtures/profile.ts`, never the real CV. The only exception is the single "real CV is valid" test.
@@ -488,7 +500,9 @@ Rules:
 - Touch only the paths your slice owns (§5). Do not edit contracts, shared/, configs, package.json.
   If you are blocked by a contract, stop and report; do not work around it.
 - Follow §7 (SOLID/KISS/DRY, TS strict, React+GSAP rules) exactly.
-- Before pushing: `npm run check` is green; no console errors or hydration warnings in `npm run dev`;
+- Before pushing: `npm run check` is green (format, lint with zero warnings, typecheck, unit tests, build);
+  after pushing, the CI job "CV & site checks" must be green on your PR before it can merge. Fix red steps in this PR.
+- Also before pushing: no console errors or hydration warnings in `npm run dev`;
   compare against `npx http-server legacy -p 8081` at 1440×900 and 390×844, and with reduced motion.
 
 PR description must include: what was ported (legacy file → new file), any deviation from legacy and why,
@@ -518,6 +532,7 @@ Each PR gets one review pass (`/code-review` against §7 and the slice acceptanc
 | Pin offsets go wrong because of mount order or late fonts | The single orchestrator mounts in registry order, refreshes after boot and after `fonts.ready`, and the e2e test checks `.pin-spacer` presence and nav-jump landing. |
 | Hydration mismatches (time, random, env) | Build-time `now` (D9), deterministic Views (§7 rule 4), and the e2e test fails on console errors. |
 | StrictMode double-mount duplicates listeners or loops | `gsap.context` revert, `AbortSignal` everywhere, cleanups returned from `mount`, and a listener counter checked in S1. |
+| A slice merges with lint errors or failing tests | CI gates every PR from S0 (D14) with separate lint/test steps, `--max-warnings 0`, and a required-check ruleset on `migrate/nextjs`. |
 | Ten parallel agents produce conflicting edits | Disjoint ownership (§5), frozen contracts and lockfile, and a "promote to shared" list instead of edits to shared code. |
 | The PDF changes subtly (fonts, page breaks) | Named `@font-face` families kept (D8), the same `is-ready` contract, and a page-PNG diff in S9. |
 | URL breakage (`/cv.html`, PDF path) | `trailingSlash: false`, the PDF stays at `/assets/cv/…`, and the e2e test checks both URLs. |
