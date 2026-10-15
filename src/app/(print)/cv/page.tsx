@@ -1,4 +1,12 @@
-// STUB (S0): S9 ports legacy/cv.html + legacy/src/cv/ (toolbar, sheet, is-ready signal).
+import { profile } from '@/content/profile';
+import { CvSheet } from '@/cv/CvSheet';
+import { CvToolbar } from '@/cv/CvToolbar';
+
 export default function CvPage() {
-  return <article className="sheet" id="cv" />;
+  return (
+    <>
+      <CvToolbar />
+      <CvSheet profile={profile} />
+    </>
+  );
 }
