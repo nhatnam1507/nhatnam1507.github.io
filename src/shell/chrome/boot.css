@@ -14,6 +14,11 @@
   color: var(--muted);
 }
 
+/* the service hides the overlay with [hidden] (React owns the node); the id rule above sets display */
+#boot[hidden] {
+  display: none;
+}
+
 .boot-log {
   margin: 0 0 18px;
   white-space: pre-wrap;

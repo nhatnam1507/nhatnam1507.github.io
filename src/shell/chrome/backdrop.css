@@ -9,6 +9,11 @@
   pointer-events: none;
 }
 
+/* hidden by the runtime when WebGL is unavailable */
+#webgl[hidden] {
+  display: none;
+}
+
 .fx-grid {
   position: fixed;
   inset: 0;

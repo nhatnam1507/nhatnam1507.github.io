@@ -41,6 +41,11 @@
   background: rgba(46, 242, 176, 0.12);
 }
 
+/* hidden by the service without a fine pointer or with reduced motion */
+.cursor[hidden] {
+  display: none;
+}
+
 @media (hover: none), (pointer: coarse) {
   .cursor {
     display: none;
