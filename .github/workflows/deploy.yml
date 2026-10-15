@@ -1,6 +1,7 @@
-# On every push to main: run the same checks as CI, build the static export
-# and publish out/ to GitHub Pages. A weekly run keeps build-time dates (years
-# of experience, "Present" roles) fresh between content changes.
+# On every push to main: run the same checks as CI, build the static export,
+# render a fresh CV PDF into it and publish out/ to GitHub Pages. A weekly run
+# keeps build-time dates (years of experience, "Present" roles) fresh between
+# content changes.
 # Requires Settings → Pages → Source: "GitHub Actions" (see README → CI/CD).
 name: Deploy
 
@@ -25,7 +26,7 @@ jobs:
   build:
     name: Build site & CV
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
 
@@ -33,6 +34,10 @@ jobs:
 
       - name: Checks (CV validation, format, lint, typecheck, tests, build)
         run: npm run check
+
+      # The PDF in public/assets/cv is only a local copy: always publish a fresh one.
+      - name: Render fresh CV PDF into the export
+        run: npm run pdf -- --out out/assets/cv/Nam_Nguyen_Nhat_CV.pdf
 
       - uses: actions/configure-pages@v5
 

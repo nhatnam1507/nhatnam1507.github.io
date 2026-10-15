@@ -1,5 +1,5 @@
 name: Setup
-description: Node, dependencies and a Chromium for rendering the CV PDF.
+description: Node, dependencies and a Chrome for rendering the CV PDF and running the Playwright e2e tests.
 
 runs:
   using: composite
@@ -15,8 +15,9 @@ runs:
       env:
         PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1' # use the runner's Chrome below
 
-    # GitHub-hosted Ubuntu runners ship Google Chrome; fall back to
-    # Playwright's Chromium if a runner image ever doesn't.
+    # GitHub-hosted Ubuntu runners ship Google Chrome. CHROMIUM_PATH is read by
+    # scripts/build-pdf.ts and playwright.config.ts. If a runner image ever
+    # lacks Chrome, install Playwright's Chromium instead (it needs no path).
     - name: Locate Chrome
       shell: bash
       run: |

@@ -5,6 +5,7 @@
 ## Checklist
 
 - [ ] `npm run check` passes locally (validate, format, lint with zero warnings, typecheck, unit tests, build)
+- [ ] `npm run build && npm run e2e` passes locally (Playwright smoke tests against `out/`)
 - [ ] Tests added or updated for new or changed pure logic
 - [ ] Only paths this change owns are touched (migration slices: see `docs/nextjs-migration/PLAN.md` §5)
 - [ ] No console errors or hydration warnings in `npm run dev`
