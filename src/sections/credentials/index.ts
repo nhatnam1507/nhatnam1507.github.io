@@ -1,4 +1,6 @@
-// STUB (S0): replaced by the slice that ports legacy/src/sections/credentials/.
+// 04 // credentials — certificate cards that verify themselves as they enter,
+// then education and career drawn on one time axis. Markup: View.tsx;
+// animation: behaviour.ts.
 import { defineSection } from '@/shell/contract';
 import { CredentialsView } from './View';
 
