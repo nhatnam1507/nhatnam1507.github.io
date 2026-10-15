@@ -1,0 +1,9 @@
+legacy/
+out/
+.next/
+dist/
+node_modules/
+public/
+package-lock.json
+next-env.d.ts
+*.md

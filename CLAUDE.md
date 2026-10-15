@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+> **Migration in progress: the site is moving to Next.js.** See `docs/nextjs-migration/PLAN.md`. The new app lives in `src/` (Next App Router, TypeScript), and the original static site has moved to `legacy/` as the reference implementation (`npm run legacy` serves it on :8081). Until S11 rewrites this file, the architecture notes below describe `legacy/`. The commands are now `npm run dev | build | check | test | lint | typecheck | format | validate`. The ScrollTrigger gotchas still apply.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## What this is

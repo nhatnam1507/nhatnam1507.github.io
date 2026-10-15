@@ -2,7 +2,7 @@
 
 Move the portfolio from hand-wired static HTML + ES modules to **Next.js (App Router, TypeScript, static export to GitHub Pages)**. The work is split into independent slices so several implementation agents can work on them in parallel.
 
-- **Status:** draft for review
+- **Status:** in progress. S0 is done; wave 1 is running
 - **Implementation agents:** Sonnet (`model: "sonnet"`), one slice per agent, each in its own git worktree
 - **Ground rule:** this is a **port, not a redesign**. Every pixel, animation, URL and CV byte should match the current site. Improvements go in follow-ups (§10).
 
@@ -99,103 +99,48 @@ legacy/                    reference implementation, deleted in S11
 
 Wave-1 agents code against these and **must not change them**. If a slice needs a contract change, it stops and reports to the integrator.
 
-```ts
-// src/shell/contract.ts
-import type { ReactNode } from 'react';
-import type { CareerStats, Profile, Role } from '@/domain/types';
+**The source of truth is the code**, delivered in S0. Read these files rather than relying on this summary:
 
-export type SectionId = 'hero' | 'about' | 'experience' | 'stack' | 'marquee' | 'credentials' | 'contact';
-export type ShapeName = 'core' | 'helix' | 'lattice' | 'network' | 'knot' | 'portal';
+| File | What it fixes |
+|---|---|
+| `src/shell/contract.ts` | `SectionId`, `ShapeName`, `SceneHandle`, `ShellServices`, `PageContext`, `RuntimeContext`, `Behaviour`, `SectionMeta`/`StripMeta`/`BlockMeta`, `Block`, `defineSection`, `defineBehaviour`, `isSection`, `toMeta`, `navSections` |
+| `src/shell/registry.ts` | `blocks` (order = page order = mount order = nav numbers = shape sequence), `sections`, `blockMeta`, `sectionMeta` |
+| `src/shell/behaviours.ts` | `behaviours satisfies Record<SectionId, Behaviour>` (order lives only in the registry) |
+| `src/shell/context.ts` | `createPageContext(now)`: the only place ctx data is built (server and client) |
+| `src/shell/runtime.tsx` | `PageRuntime({ blocks: BlockMeta[], nowISO })`: the orchestrator |
+| `src/shell/services/*.ts`, `src/shell/scene/scene.ts` | stubs with the final signatures (S1 and S2 replace the bodies only) |
 
-export interface Env { reducedMotion: boolean; finePointer: boolean }
+Key points:
 
-export interface SceneHandle {
-  setProgress(p: number): void;            // float index into the shape sequence
-  snap(): void;                            // jump to target (behind the nav curtain)
-  anchor(shape: ShapeName): { x: number; y: number; r: number };
-  dispose(): void;
-}
+- **Teardown is signal-based.** Every service and the scene receive an `AbortSignal` and undo everything they set up when it aborts: listeners, tickers, RAF, intervals, Lenis, GPU resources. Behaviours get the same signal as `ctx.signal`. `mount` may also return a `Cleanup`. GSAP tweens and ScrollTriggers are reverted automatically by the runtime's `gsap.context`, including ones created after boot, which run via `contextSafe`.
+- **Views never cross into the client bundle.** The runtime receives `BlockMeta` (no View) as props from the server page. Views are Server Components and get `PageContext`, which is data only.
+- **Shell services replace cross-slice DOM coupling**: `ctx.services.navigate(id)`, `.exportCv()` and `.toast(html)`, plus `ctx.navTargets`.
+- **Shape names are a type.** S2 writes `SHAPES satisfies Record<ShapeName, Shape>`.
 
-export interface ShellServices {
-  navigate(id: SectionId): void;           // curtain jump (replaces clicking .nav-links a)
-  exportCv(): void;                        // download + toast (replaces clicking .js-export)
-  toast(html: string): void;
-}
-
-/** Data only; safe for Server Components. */
-export interface PageContext {
-  profile: Profile;
-  roles: Role[];                           // oldest first
-  stats: CareerStats;
-  now: Date;                               // build time (D9)
-  index: number;                           // position among sections (hero = 0)
-}
-
-/** What behaviours get: data + runtime environment + services. */
-export interface RuntimeContext extends PageContext {
-  env: Env;
-  scene: SceneHandle | null;               // null without WebGL
-  services: ShellServices;
-  navTargets: SectionId[];                 // sections shown in the nav, in order
-  signal: AbortSignal;                     // aborted on teardown; pass to every addEventListener
-}
-
-export type Cleanup = () => void;
-export interface Behaviour {
-  mount?(root: HTMLElement | null, ctx: RuntimeContext): Cleanup | void;
-  onReady?(root: HTMLElement | null, ctx: RuntimeContext): void;
-}
-
-interface BlockBase<Id extends SectionId = SectionId> {
-  id: Id;
-  View: (props: { ctx: PageContext }) => ReactNode;
-}
-export interface SectionBlock extends BlockBase {
-  kind: 'section'; label: string; shape: ShapeName; navLabel?: string; nav?: boolean; className?: string;
-}
-export interface StripBlock extends BlockBase { kind: 'strip' }
-export type Block = SectionBlock | StripBlock;
-
-export const defineSection = <B extends Block>(b: B): Readonly<B> => Object.freeze(b);
-export const defineBehaviour = (b: Behaviour): Readonly<Behaviour> => Object.freeze(b);
-```
+Service signatures (S1 implements them):
 
 ```ts
-// src/shell/registry.ts — order = page order = mount order = nav numbers = shape sequence
-export const blocks = [hero, about, experience, stack, marquee, credentials, contact] as const satisfies readonly Block[];
-export const sections = blocks.filter((b): b is SectionBlock => b.kind === 'section');
-
-// src/shell/behaviours.ts — no order here (order lives only in registry.ts)
-export const behaviours = { hero, about, experience, stack, marquee, credentials, contact } satisfies Record<SectionId, Behaviour>;
-
-// src/shell/scene/shapes.ts (S2) must satisfy:  export const SHAPES = {...} satisfies Record<ShapeName, Shape>;
-```
-
-**Shell modules S0 stubs with their final signatures** (S1 and S2 replace the bodies only):
-
-```ts
-createScene(canvas: HTMLCanvasElement, opts: { shapes: ShapeName[]; reducedMotion: boolean }): SceneHandle  // throws without WebGL
-createSmoothScroll(env: Env): Lenis | null
-attachJumps(opts: { lenis: Lenis | null; scene: SceneHandle | null; reducedMotion: boolean; signal: AbortSignal }): { navigate(id: SectionId): void }
-startTracker(opts: { sections: readonly SectionBlock[]; scene: SceneHandle | null; signal: AbortSignal }): Cleanup
-attachReveals(): void
-chromeIntro(): void
+boot(env: Env, signal: AbortSignal): Promise<void>                       // hide #boot, never remove it
+createSmoothScroll(env: Env, signal: AbortSignal): Lenis | null
+attachJumps(opts: { lenis; scene; reducedMotion; signal }): { navigate(id: SectionId): void }
+startTracker(opts: { sections: readonly SectionMeta[]; scene; signal }): void
+attachReveals(): void;  chromeIntro(): void                               // GSAP only (context-reverted)
 attachCursor(env: Env, signal: AbortSignal): void
 createExport(toast: (html: string) => void, signal: AbortSignal): { exportCv(): void }
 showToast(html: string): void
-boot(env: Env): Promise<void>
+createScene(canvas, { shapes: readonly ShapeName[]; reducedMotion; signal }): SceneHandle   // S2; throws without WebGL
 ```
 
-**Runtime sequence** (`shell/runtime.tsx`, S0). It mirrors `legacy/src/main.js`, running inside `useGSAP(() => {...}, [])`, so `gsap.context` reverts every tween and ScrollTrigger on teardown:
+**Runtime sequence** (mirrors `legacy/src/main.js`):
 
-1. `ctx = createPageContext(new Date(nowISO))`, `controller = new AbortController()`
-2. `scene = tryCreateScene()` (on failure: warn, hide `#webgl`, `null`)
-3. `lenis = createSmoothScroll(env)`; `lenis?.stop()`
-4. `navigate = attachJumps(...)`; build `services`
-5. for each block in registry order: `cleanups.push(behaviours[id].mount?.(root, rctx(block)))`
-6. `attachReveals()`, `attachCursor()`, `startTracker()`, `createExport()`
-7. `await boot(env)` (guard: bail out if aborted), then `lenis?.start()`, `chromeIntro()`, `onReady` per block in order, `ScrollTrigger.refresh()`, and refresh again on `document.fonts.ready`
-8. teardown: `controller.abort()`, run cleanups in reverse, `scene?.dispose()`, `lenis?.destroy()`
+1. build ctx from `nowISO`
+2. `tryCreateScene` (on failure: warn, hide the canvas, use `null`)
+3. Lenis (stopped)
+4. jumps and export, which produce the services
+5. `mount` each block in registry order
+6. reveals, cursor, tracker
+7. `await boot()`, then (if not aborted) Lenis start, `chromeIntro`, `onReady` in order, and `ScrollTrigger.refresh()` (again after `fonts.ready`)
+8. on teardown: abort the signal and run the cleanups in reverse
 
 ---
 
@@ -294,7 +239,7 @@ Acceptance:
 
 Tasks:
 1. `chrome/`: `Nav` (links generated from `sections`, numbers from position, hero excluded, `nav !== false`), `Hud` (total = `sections.length - 1`), `Boot`, `Curtain`, `Cursor`, `Backdrop` (`#webgl` canvas + fx divs), `Footer` (year from `ctx.now`), `Toast`. Keep the legacy markup, classes and ARIA exactly, and move each CSS file next to its component.
-2. `services/`: port each module to TS with the §4 signatures. Every listener uses `signal`; every `gsap.ticker.add` and `ScrollTrigger.addEventListener` returns or registers its removal.
+2. `services/`: port each module to TS with the §4 signatures. Every listener uses `signal`; every `gsap.ticker.add`, `ScrollTrigger.addEventListener`, `setTimeout` and Lenis instance is undone when `signal` aborts.
 3. `attachJumps` returns `navigate(id)` (the curtain jump). The nav's own `[data-scroll-to]` click handler calls the same function (DRY).
 4. `boot()` hides `#boot` instead of `remove()`-ing it, since React owns that node. Do the same for the cursor when it's disabled.
 5. `createExport` triggers the PDF download from `/assets/cv/Nam_Nguyen_Nhat_CV.pdf` and shows the toast. `.js-export` anchors keep working without JS (`href` + `download`).
@@ -312,13 +257,13 @@ Acceptance:
 
 Tasks:
 1. Port `scene.ts`, `shapes.ts` and `shaders.ts` to TS on npm `three@0.169.0`. `SHAPES satisfies Record<ShapeName, Shape>`.
-2. Implement `SceneHandle` including `dispose()`: cancel the RAF, remove listeners via an internal `AbortController`, and dispose of the geometries, materials and renderer.
+2. Implement `SceneHandle`. When `opts.signal` aborts: cancel the RAF, remove listeners and dispose of the geometries, materials and renderer.
 3. Keep adaptive quality, the mobile particle counts, the DPR cap and the pause on hidden tab.
 4. Unit-test the shape generators (correct buffer length, finite values) under Vitest with no WebGL.
 
 Acceptance:
 - The morph sequence, rings, dust, pointer parallax/repel and `anchor()` positions match legacy at 1440×900 and 390×844.
-- `dispose()` followed by re-create in StrictMode leaves one canvas context and no leaked RAF.
+- Abort followed by re-create (StrictMode in dev) leaves one canvas context and no leaked RAF.
 
 ### S3 Hero section (M)
 

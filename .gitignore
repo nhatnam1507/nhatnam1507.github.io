@@ -1,4 +1,10 @@
 node_modules/
 dist/
 _site/
+out/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+test-results/
+playwright-report/
 .DS_Store
