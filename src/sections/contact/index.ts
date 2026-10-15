@@ -1,4 +1,4 @@
-// STUB (S0): replaced by the slice that ports legacy/src/sections/contact/.
+// 05 // contact — registry entry; behaviour lives in ./behaviour.ts.
 import { defineSection } from '@/shell/contract';
 import { ContactView } from './View';
 

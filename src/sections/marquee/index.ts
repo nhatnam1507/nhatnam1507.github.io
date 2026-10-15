@@ -1,4 +1,4 @@
-// STUB (S0): replaced by S8 (legacy/src/sections/marquee/index.js).
+// Decorative strip (kind: strip): not numbered, not tracked, no behaviour.
 import { defineSection } from '@/shell/contract';
 import { MarqueeView } from './View';
 
