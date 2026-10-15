@@ -1,5 +1,4 @@
-// Boot screen: a few fake systemd lines, then it slides away. Click to skip
-// (ported from legacy/src/app/boot.js).
+// Boot screen: a few fake systemd lines, then it slides away. Click to skip.
 import { gsap } from '@/shared/lib';
 import { $req, esc } from '@/shared/dom';
 import type { Env } from '@/shared/env';

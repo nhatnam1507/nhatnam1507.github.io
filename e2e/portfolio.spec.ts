@@ -1,15 +1,15 @@
 // Smoke tests for the portfolio page (/), run at desktop, mobile and with
 // reduced motion (see playwright.config.ts). Expectations come from the
-// section contract and registry, plus the legacy site's pinning behaviour.
+// section contract and registry, plus which sections pin by design.
 import type { Page } from '@playwright/test';
 import { MEDIA, NAV_HEIGHT } from '@/shared/env';
 import { pad2 } from '@/shared/dom';
 import type { SectionId } from '@/shell/contract';
 import { expect, expectedNavLinks, expectedSections, openPortfolio, test, waitForBoot } from './support';
 
-/** The sections the legacy site pins on desktop (with reduced motion only the experience timeline pins). */
-const LEGACY_PINNED = ['about', 'experience', 'stack'] as const satisfies readonly SectionId[];
-const LEGACY_PINNED_REDUCED = ['experience'] as const satisfies readonly SectionId[];
+/** The sections that pin on desktop (with reduced motion only the experience timeline pins). */
+const PINNED = ['about', 'experience', 'stack'] as const satisfies readonly SectionId[];
+const PINNED_REDUCED = ['experience'] as const satisfies readonly SectionId[];
 
 const isDesktop = (page: Page): Promise<boolean> => page.evaluate((query) => matchMedia(query).matches, MEDIA.desktop);
 
@@ -39,7 +39,7 @@ test('renders the registry sections in order with their labels', async ({ page }
 
 test('every section after the hero shows its kicker number', async ({ page }) => {
   await page.goto('/');
-  // The hero may have no kicker (the legacy one doesn't); every other section does.
+  // The hero has no kicker by design; every other section does.
   for (const { id, index } of expectedSections) {
     const kicker = page.locator(`#${id} .kicker > span`).first();
     if (index === 0 && (await kicker.count()) === 0) continue;
@@ -78,13 +78,13 @@ test('pinned sections get a pin-spacer on desktop and none on mobile', async ({ 
     expect(pinned, 'phones get enter animations, never pins').toEqual([]);
     return;
   }
-  // Each spacer wraps exactly one section, and the pinned set matches the legacy site.
+  // Each spacer wraps exactly one section, and exactly the expected sections pin.
   const ids = pinned.map((spacer) => {
     expect(spacer.children).toHaveLength(1);
     return spacer.children[0];
   });
   const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
-  expect(ids, 'pinned sections, in registry order').toEqual([...(reduced ? LEGACY_PINNED_REDUCED : LEGACY_PINNED)]);
+  expect(ids, 'pinned sections, in registry order').toEqual([...(reduced ? PINNED_REDUCED : PINNED)]);
   for (const spacer of pinned) expect(spacer.parent).toBe('app');
 });
 

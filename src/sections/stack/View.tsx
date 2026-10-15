@@ -1,4 +1,4 @@
-// 03 // stack — markup of the architecture diagram (ported from legacy template.js).
+// 03 // stack — markup of the architecture diagram.
 // Pure markup, rendered at build time; behaviour.ts brings it to life.
 import { Fragment, type ReactNode } from 'react';
 import type { PageContext } from '@/shell/contract';

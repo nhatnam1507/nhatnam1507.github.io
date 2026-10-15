@@ -1,5 +1,5 @@
 // The page's single toast (`.toast`, rendered by chrome/Toast): one message at
-// a time (ported from legacy/src/app/toast.js).
+// a time.
 import { $req } from '@/shared/dom';
 
 const TOAST_MS = 2800;

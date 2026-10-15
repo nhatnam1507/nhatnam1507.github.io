@@ -1,7 +1,6 @@
 // 05 // contact — the closing call to action, as an API: endpoints you can
 // hit (the email one copies), a terminal that pings Nam, and a live Hanoi
 // clock that says what he's probably doing right now.
-// Ported from legacy/src/sections/contact/index.js (mount).
 import { gsap, ScrollTrigger } from '@/shared/lib';
 import { $$, $req } from '@/shared/dom';
 import { createLoop, whileVisible } from '@/shared/motion';

@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "serve out -l 8080",
-    "legacy": "npx --yes http-server legacy -p 8081 -c-1",
     "validate": "tsx scripts/validate-profile.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

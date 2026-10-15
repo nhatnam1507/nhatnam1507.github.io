@@ -1,5 +1,4 @@
-// The tracker's pure arithmetic and text formatting (ported from
-// legacy/src/app/tracker.js), kept free of DOM and GSAP so it can be unit-tested.
+// The tracker's pure arithmetic and text formatting, kept free of DOM and GSAP so it can be unit-tested.
 
 /** Sections fade the 3D scene in over this share of a viewport before their top reaches the top edge. */
 const SCENE_FADE = 0.8;

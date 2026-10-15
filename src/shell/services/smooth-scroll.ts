@@ -1,5 +1,4 @@
-// Lenis smooth scrolling, driven by GSAP's ticker so ScrollTrigger stays in sync
-// (ported from legacy/src/app/smooth-scroll.js).
+// Lenis smooth scrolling, driven by GSAP's ticker so ScrollTrigger stays in sync.
 import { gsap, Lenis, ScrollTrigger } from '@/shared/lib';
 import type { Env } from '@/shared/env';
 import { onAbort } from '@/shared/abort';

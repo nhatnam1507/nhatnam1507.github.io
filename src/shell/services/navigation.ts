@@ -3,7 +3,6 @@
 // Jumps don't smooth-scroll through every pinned/scrubbed section in between
 // (that replays all of them at once and stutters): a curtain wipes in, the
 // page jumps underneath it, the 3D scene snaps, and the curtain wipes out.
-// Ported from legacy/src/app/navigation.js.
 import { gsap, ScrollTrigger, type Lenis } from '@/shared/lib';
 import { $req } from '@/shared/dom';
 import { scrollRange } from '@/shared/motion';

@@ -1,4 +1,4 @@
-// Hero markup (was legacy/src/sections/hero/template.js). Static only: the
+// Hero markup. Static only: the
 // behaviour fills the clock, types the terminal and positions the HUD.
 import type { PageContext } from '@/shell/contract';
 import { ExportButton, Icon } from '@/shared/ui';

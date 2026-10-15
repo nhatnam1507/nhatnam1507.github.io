@@ -1,4 +1,5 @@
-// STUB (S0): replaced by the slice that ports legacy/src/sections/stack/.
+// stack: the toolset drawn as the system it builds (markup in View.tsx,
+// pinned build-up and live widgets in behaviour.ts).
 import { defineSection } from '@/shell/contract';
 import { StackView } from './View';
 

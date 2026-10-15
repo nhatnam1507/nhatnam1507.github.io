@@ -1,5 +1,5 @@
 // Reusable markup partials for Views (Server Components). Same markup as the
-// legacy string partials, so the CSS applies unchanged.
+// original string partials, so the CSS applies unchanged.
 import type { CSSProperties } from 'react';
 import { pad2 } from './dom';
 import { CV_PDF_NAME, CV_PDF_PATH } from './site';

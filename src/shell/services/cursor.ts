@@ -1,5 +1,4 @@
-// Custom cursor ring. Grows over links, buttons and anything with [data-hover]
-// (ported from legacy/src/app/cursor.js).
+// Custom cursor ring. Grows over links, buttons and anything with [data-hover].
 import { gsap } from '@/shared/lib';
 import { $req } from '@/shared/dom';
 import type { Env } from '@/shared/env';

@@ -1,4 +1,4 @@
-// 05 // contact markup (ported from legacy/src/sections/contact/template.js).
+// 05 // contact markup.
 // Server Component: the live Hanoi clock and presence line are placeholders
 // that behaviour.ts fills in (a View must not read the current time).
 import type { PageContext } from '@/shell/contract';

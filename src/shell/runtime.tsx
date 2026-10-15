@@ -1,5 +1,5 @@
 'use client';
-// The client orchestrator (was legacy/src/main.js): the one place behaviours
+// The client orchestrator (the composition root's runtime half): the one place behaviours
 // run. Everything happens in one useGSAP effect so (a) blocks mount strictly
 // in registry order, which ScrollTrigger pins require, and (b) every tween and
 // ScrollTrigger is reverted on teardown (React StrictMode mounts twice in dev).

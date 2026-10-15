@@ -1,4 +1,4 @@
-// Markup ported from legacy/src/sections/credentials/template.js: certificate
+// Credentials markup: certificate
 // cards that the behaviour later verifies, then education and career on one
 // time axis. Pure and deterministic (build-time `ctx.now`).
 import type { Certificate, Education } from '@/domain/types';

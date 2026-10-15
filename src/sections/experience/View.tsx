@@ -1,4 +1,4 @@
-// Experience markup (was legacy template.js): a git-log style timeline chart
+// Experience markup: a git-log style timeline chart
 // plus one role card per job, all built from ctx.roles. Server Component:
 // the behaviour moves the playhead, fills the bars and activates the cards.
 import type { Role } from '@/domain/types';

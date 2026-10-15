@@ -1,5 +1,5 @@
 // The boot screen's script and timings: pure data and arithmetic, so the
-// service itself only deals with the DOM (ported from legacy/src/app/boot.js).
+// service itself only deals with the DOM.
 
 /** `[class, tag, text]` */
 export const BOOT_LINES = [

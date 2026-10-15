@@ -1,5 +1,4 @@
-// Scroll tracking → 3D scene progress, HUD and nav state (ported from
-// legacy/src/app/tracker.js).
+// Scroll tracking → 3D scene progress, HUD and nav state.
 // Section offsets are measured once per ScrollTrigger refresh (pinned
 // sections via their pin-spacer), so per-frame work is arithmetic on scrollY
 // with no layout reads, and the DOM is only written when a value changes.

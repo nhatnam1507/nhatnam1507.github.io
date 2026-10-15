@@ -1,4 +1,4 @@
-// The fixed page chrome around the sections (legacy/index.html minus <head>).
+// The fixed page chrome around the sections.
 // Server Components throughout: ids and classes are the hooks the shell
 // services select, so keep them. Stateless on purpose (PLAN.md §7 rule 2).
 import type { ReactNode } from 'react';

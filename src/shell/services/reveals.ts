@@ -1,5 +1,5 @@
 // Page-wide entrance effects shared by every section: kickers slide in and
-// `.split` headings rise word by word (ported from legacy/src/app/reveals.js).
+// `.split` headings rise word by word.
 // GSAP-only, so the runtime's gsap.context reverts every tween and
 // ScrollTrigger on teardown.
 import { gsap } from '@/shared/lib';

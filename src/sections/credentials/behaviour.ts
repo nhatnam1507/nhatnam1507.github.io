@@ -1,4 +1,4 @@
-// Credentials behaviour (was mount() in legacy/src/sections/credentials/index.js):
+// Credentials behaviour:
 // each card verifies itself once it scrolls into view (scan → `$ verify <id>`
 // decodes, the bar and ring fill, the stamp lands), with a holographic tilt.
 // Classes drive the CSS; GSAP only animates the `.cert-wrap` wrappers so it

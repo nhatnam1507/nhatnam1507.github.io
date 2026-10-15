@@ -2,7 +2,7 @@
 
 Move the portfolio from hand-wired static HTML + ES modules to **Next.js (App Router, TypeScript, static export to GitHub Pages)**. The work is split into independent slices so several implementation agents can work on them in parallel.
 
-- **Status:** in progress. S0 is done; wave 1 is running
+- **Status:** done. All slices (S0–S11) are merged, and `legacy/` has been removed. See §11 for how execution differed from the plan.
 - **Implementation agents:** Sonnet (`model: "sonnet"`), one slice per agent, each in its own git worktree
 - **Ground rule:** this is a **port, not a redesign**. Every pixel, animation, URL and CV byte should match the current site. Improvements go in follow-ups (§10).
 
@@ -488,3 +488,21 @@ Each PR gets one review pass (`/code-review` against §7 and the slice acceptanc
 - Lazy-load `three` behind the boot screen.
 - Consider CSS Modules per section, once the behaviours select elements by refs or `data-` hooks instead of class names.
 - Consider React islands for the hero and contact terminals.
+
+## 11. Execution notes
+
+- **Integration branch.** The session could only push to `claude/sweet-ritchie-f70ids`, so that branch was the integration branch instead of `migrate/nextjs`. Each wave-1 slice was squash-merged locally, one commit per slice, after `npm run check` passed on the combined tree. CI runs on the PR to `main`.
+- **Worktree bases.** Some agent worktrees started from the pre-migration `main`. Each agent (or the integrator) moved them onto the S0 commit before starting, and no work was lost.
+- **Fixes during integration:**
+  - lint, format, typecheck and tests now exclude `.claude/worktrees/`
+  - `[hidden]` CSS rules for the boot overlay, cursor and canvas (S1)
+  - `cssVars` and `onAbort` promoted to `src/shared` (the S11 dedupe)
+  - e2e assertions tightened once S1 and S9 landed
+- **Parity:** checked against the legacy site at 1440×900, 390×844 and with reduced motion:
+  - page heights and pinned sections were identical
+  - screenshots differed only in the random particle layout, live clocks, typing progress and fps
+  - the S2 scene was pixel-identical under a seeded harness
+  - the S9 PDF had identical text and page count
+- **Bundle:** the JS loaded by `/` is about 356 KB gzipped, against about 277 KB for legacy. The difference is the React/Next runtime; Three tree-shakes below the old vendored size.
+- **Tooling:** ESLint stays on 9.x because `eslint-plugin-react` doesn't support 10 yet, and TypeScript on 6.0 because `typescript-eslint` supports `<6.1`.
+

@@ -1,5 +1,4 @@
-// Every `.js-export` link downloads the prebuilt PDF and shows a toast
-// (ported from legacy/src/app/export-cv.js).
+// Every `.js-export` link downloads the prebuilt PDF and shows a toast.
 import { CV_PDF_NAME, CV_PDF_PATH } from '@/shared/site';
 
 /**
