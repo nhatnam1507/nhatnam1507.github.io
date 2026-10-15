@@ -1,7 +1,7 @@
 // onAbort is how every service undoes its setup on teardown.
 import { test } from 'vitest';
 import assert from 'node:assert/strict';
-import { onAbort } from '@/shell/services/abort';
+import { onAbort } from '@/shared/abort';
 
 test('onAbort runs the undo once when the signal aborts', () => {
   const controller = new AbortController();

@@ -1,15 +1,11 @@
 // Markup ported from legacy/src/sections/credentials/template.js: certificate
 // cards that the behaviour later verifies, then education and career on one
 // time axis. Pure and deterministic (build-time `ctx.now`).
-import type { CSSProperties } from 'react';
 import type { Certificate, Education } from '@/domain/types';
 import { tenure } from '@/domain/career';
 import type { PageContext } from '@/shell/contract';
-import { Kicker } from '@/shared/ui';
+import { Kicker, cssVars } from '@/shared/ui';
 import { identicon, lifePath, sealFill, verifyResult } from './content';
-
-/** Inline CSS custom properties (React's CSSProperties doesn't know `--x`). */
-const cssVars = (vars: Record<`--${string}`, string>): CSSProperties => vars as CSSProperties;
 
 function Seal({ cert }: { cert: Certificate }) {
   return (

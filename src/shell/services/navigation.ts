@@ -8,7 +8,7 @@ import { gsap, ScrollTrigger, type Lenis } from '@/shared/lib';
 import { $req } from '@/shared/dom';
 import { scrollRange } from '@/shared/motion';
 import type { SceneHandle, SectionId } from '../contract';
-import { onAbort } from './abort';
+import { onAbort } from '@/shared/abort';
 
 export interface JumpOptions {
   lenis: Lenis | null;

@@ -2,7 +2,7 @@
 // (ported from legacy/src/app/smooth-scroll.js).
 import { gsap, Lenis, ScrollTrigger } from '@/shared/lib';
 import type { Env } from '@/shared/env';
-import { onAbort } from './abort';
+import { onAbort } from '@/shared/abort';
 
 /** Lenis instance (null with reduced motion). Destroyed and unhooked when `signal` aborts. */
 export function createSmoothScroll({ reducedMotion }: Env, signal: AbortSignal): Lenis | null {

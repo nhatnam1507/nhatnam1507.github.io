@@ -1,5 +1,6 @@
 // Scroll/animation building blocks shared by the pinned "scene" sections.
 import { ScrollTrigger } from './lib';
+import { onAbort } from './abort';
 import { isDesktop, NAV_HEIGHT } from './env';
 
 /**
@@ -60,14 +61,10 @@ export function whileVisible(section: HTMLElement, { onShow, onHide }: Visibilit
     },
     { signal },
   );
-  signal.addEventListener(
-    'abort',
-    () => {
-      trigger.kill();
-      onHide();
-    },
-    { once: true },
-  );
+  onAbort(signal, () => {
+    trigger.kill();
+    onHide();
+  });
 }
 
 /**

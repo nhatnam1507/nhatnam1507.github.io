@@ -3,7 +3,7 @@
 import { gsap } from '@/shared/lib';
 import { $req, esc } from '@/shared/dom';
 import type { Env } from '@/shared/env';
-import { onAbort } from './abort';
+import { onAbort } from '@/shared/abort';
 import { BOOT_LINES, FINISH_DELAY, RESOLVE_DELAY, barPercent, lineDelay } from './boot-script';
 
 /**

@@ -1,12 +1,11 @@
 // Experience markup (was legacy template.js): a git-log style timeline chart
 // plus one role card per job, all built from ctx.roles. Server Component:
 // the behaviour moves the playhead, fills the bars and activates the cards.
-import type { CSSProperties } from 'react';
 import type { Role } from '@/domain/types';
 import { tenure } from '@/domain/career';
 import { pad2 } from '@/shared/dom';
 import { shortHash } from '@/shared/random';
-import { Kicker } from '@/shared/ui';
+import { Kicker, cssVars } from '@/shared/ui';
 import type { PageContext } from '@/shell/contract';
 import { EMPLOYER_COLORS, colorOf } from './content';
 import { timelineScale, type TimelineScale } from './timeline';
@@ -15,14 +14,11 @@ const RING = 2 * Math.PI * 30;
 /** tenure that fills the ring completely */
 const RING_FULL_MONTHS = 24;
 
-/** Inline style carrying CSS custom properties (React's style type doesn't know them). */
-const vars = (v: Record<string, string | number>): CSSProperties => v;
-
 function TimelineRow({ role, index, pct }: { role: Role; index: number; pct: TimelineScale['pct'] }) {
   const left = `${pct(role.start)}%`;
   const width = `${pct(role.end) - pct(role.start)}%`;
   return (
-    <div className="tl-row" style={vars({ '--c': colorOf(role.employer) })} data-i={index}>
+    <div className="tl-row" style={cssVars({ '--c': colorOf(role.employer) })} data-i={index}>
       <div className="tl-label">
         <i></i>
         {role.label}
@@ -38,7 +34,7 @@ function TimelineRow({ role, index, pct }: { role: Role; index: number; pct: Tim
 
 function RoleCard({ role, isHead }: { role: Role; isHead: boolean }) {
   return (
-    <article className="role-card" style={vars({ '--c': colorOf(role.employer) })}>
+    <article className="role-card" style={cssVars({ '--c': colorOf(role.employer) })}>
       <div className="role-main">
         <div className="role-meta">
           <span className="role-hash">
@@ -55,7 +51,7 @@ function RoleCard({ role, isHead }: { role: Role; isHead: boolean }) {
         <p className="role-hl">{role.highlight}</p>
         <div className="chips">
           {role.tags.map((tag, k) => (
-            <span className="chip" style={vars({ '--k': k })} key={tag}>
+            <span className="chip" style={cssVars({ '--k': k })} key={tag}>
               {tag}
             </span>
           ))}
@@ -70,11 +66,10 @@ function RoleCard({ role, isHead }: { role: Role; isHead: boolean }) {
               cx="36"
               cy="36"
               r="30"
-              style={vars({
+              style={{
                 strokeDasharray: RING,
-                '--off': RING * (1 - Math.min(1, role.months / RING_FULL_MONTHS)),
-                '--full': RING,
-              })}
+                ...cssVars({ '--off': RING * (1 - Math.min(1, role.months / RING_FULL_MONTHS)), '--full': RING }),
+              }}
             />
           </svg>
           <span>{tenure(role.months)}</span>
@@ -103,7 +98,7 @@ export function ExperienceView({ ctx }: { ctx: PageContext }) {
         <div className="exp-side" aria-hidden="true">
           <div className="exp-legend">
             {Object.entries(EMPLOYER_COLORS).map(([name, color]) => (
-              <span style={vars({ '--c': color })} key={name}>
+              <span style={cssVars({ '--c': color })} key={name}>
                 <i></i>
                 {name}
               </span>

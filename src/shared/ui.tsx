@@ -1,7 +1,11 @@
 // Reusable markup partials for Views (Server Components). Same markup as the
 // legacy string partials, so the CSS applies unchanged.
+import type { CSSProperties } from 'react';
 import { pad2 } from './dom';
 import { CV_PDF_NAME, CV_PDF_PATH } from './site';
+
+/** Inline CSS custom properties (React's CSSProperties doesn't know `--x`). */
+export const cssVars = (vars: Record<`--${string}`, string | number>): CSSProperties => vars as CSSProperties;
 
 /** '01 // about' label above a section heading; the number comes from page order. */
 export function Kicker({ index, label }: { index: number; label: string }) {

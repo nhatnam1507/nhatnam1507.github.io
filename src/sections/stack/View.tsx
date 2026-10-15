@@ -1,14 +1,14 @@
 // 03 // stack — markup of the architecture diagram (ported from legacy template.js).
 // Pure markup, rendered at build time; behaviour.ts brings it to life.
-import { Fragment, type CSSProperties, type ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import type { PageContext } from '@/shell/contract';
-import { Kicker } from '@/shared/ui';
+import { Kicker, cssVars } from '@/shared/ui';
 import { BOXES, BOX_ORDER, STAGES, type BoxId, type ToolDef } from './content';
 
 const cells = (n: number): ReactNode[] => Array.from({ length: n }, (_, i) => <i key={i} />);
 
 const Node = ({ def: [name, level], k }: { def: ToolDef; k: string }) => (
-  <span className={`an an-${level}`} tabIndex={0} data-k={k} data-hover="" style={{ '--i': k } as CSSProperties}>
+  <span className={`an an-${level}`} tabIndex={0} data-k={k} data-hover="" style={cssVars({ '--i': k })}>
     {name}
   </span>
 );

@@ -7,7 +7,7 @@ import { gsap, ScrollTrigger } from '@/shared/lib';
 import { $$, $req, pad2 } from '@/shared/dom';
 import { scrollRange } from '@/shared/motion';
 import type { SceneHandle, SectionMeta } from '../contract';
-import { onAbort } from './abort';
+import { onAbort } from '@/shared/abort';
 import { coordsLabel, fpsLabel, percentLabel, pointerToNdc, scrollFraction, trackScroll } from './tracker-math';
 
 export interface TrackerOptions {
