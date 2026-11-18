@@ -32,6 +32,8 @@ export const fixtureProfile = (): Profile => ({
       role: 'Engineer',
       company: 'Beta Soft Labs',
       project: 'Payments',
+      description: 'A payments platform for online merchants.',
+      teamSize: '6–10',
       location: 'Hanoi',
       start: 'Feb 2022',
       end: 'Feb 2024',

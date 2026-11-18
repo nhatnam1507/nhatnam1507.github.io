@@ -17,6 +17,10 @@ export interface Experience {
   role: string;
   company: string;
   project?: string;
+  /** one sentence on what the project is */
+  description?: string;
+  /** e.g. "6–10" */
+  teamSize?: string;
   location: string;
   /** "Mon YYYY" */
   start: string;

@@ -26,7 +26,14 @@ function Job({ job }: { job: Experience }) {
         <h3>
           {job.role} <span className="at">· {job.company}</span>
         </h3>
-        {job.project && <div className="job-project">Project: {job.project}</div>}
+        {(job.project || job.teamSize) && (
+          <div className="job-project">
+            {[job.project && `Project: ${job.project}`, job.teamSize && `Team size: ${job.teamSize}`]
+              .filter(Boolean)
+              .join(' · ')}
+          </div>
+        )}
+        {job.description && <p className="job-desc">{job.description}</p>}
         <ul>
           {job.bullets.map((bullet) => (
             <li key={bullet}>{bullet}</li>
