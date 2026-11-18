@@ -305,6 +305,13 @@
   color: var(--c);
   font-weight: 500;
 }
+.role-desc {
+  margin: 6px 0 0;
+  max-width: 62ch;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--muted);
+}
 .role-hl {
   margin: 12px 0 14px;
   max-width: 62ch;

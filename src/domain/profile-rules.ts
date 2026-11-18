@@ -17,6 +17,7 @@ type Obj = Record<string, unknown>;
 
 const MONTH_RE = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}$/;
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const TEAM_SIZE_RE = /^\d+(–\d+|\+)?$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const isObject = (v: unknown): v is Obj => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -165,6 +166,8 @@ export function validateProfile(profile: unknown, { now = new Date() }: { now?: 
     'role',
     'company',
     'project',
+    'description',
+    'teamSize',
     'location',
     'start',
     'end',
@@ -180,6 +183,10 @@ export function validateProfile(profile: unknown, { now = new Date() }: { now?: 
     c.text(r, 'role', at, { max: 60 });
     c.text(r, 'company', at, { max: 60 });
     c.text(r, 'project', at, { optional: true, max: 40 });
+    c.text(r, 'description', at, { optional: true, min: 20, max: 160 });
+    c.text(r, 'teamSize', at, { optional: true, max: 10 });
+    if (typeof r.teamSize === 'string' && !TEAM_SIZE_RE.test(r.teamSize))
+      c.fail(`${at}.teamSize`, `must look like "8", "6–10" or "20+", got ${JSON.stringify(r.teamSize)}`);
     c.text(r, 'location', at, { max: 60 });
     c.text(r, 'label', at, { max: 20 });
     c.text(r, 'highlight', at, { min: 20, max: 160 });

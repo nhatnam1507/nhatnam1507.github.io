@@ -135,6 +135,24 @@ test('contact fields are checked', () => {
   );
 });
 
+test('team size must be a number, a range or N+', () => {
+  hasError(
+    errorsFor((p) => {
+      p.experience[1].teamSize = 'about 8';
+    }),
+    'profile.experience[1].teamSize',
+    /must look like/,
+  );
+  ['8', '6–10', '20+'].forEach((teamSize) =>
+    assert.deepEqual(
+      errorsFor((p) => {
+        p.experience[1].teamSize = teamSize;
+      }),
+      [],
+    ),
+  );
+});
+
 test('limits keep the layout intact', () => {
   hasError(
     errorsFor((p) => {

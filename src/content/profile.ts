@@ -22,6 +22,9 @@ export const profile: Profile = {
     {
       role: 'Senior Software Engineer',
       company: 'Andpad Vietnam',
+      description:
+        'IoT services inside the ANDPAD ecosystem that let users manage devices and monitor their status from a web-based dashboard.',
+      teamSize: '3–5',
       location: 'Hanoi, Vietnam',
       start: 'Mar 2026',
       end: 'Present',
@@ -42,6 +45,9 @@ export const profile: Profile = {
       role: 'Software Engineer',
       company: 'Rikkeisoft',
       project: 'Synapse ITS',
+      description:
+        'A cloud platform for intelligent transportation systems that collects and manages data from roadside IoT devices.',
+      teamSize: '6–10',
       location: 'Hanoi, Vietnam',
       start: 'May 2025',
       end: 'Feb 2026',
@@ -62,6 +68,9 @@ export const profile: Profile = {
       role: 'DevOps Engineer',
       company: 'Rikkeisoft',
       project: 'Data Dynamics',
+      description:
+        'A microservice platform for enterprise data management, delivered on-prem through an automated installer.',
+      teamSize: '11–20',
       location: 'Hanoi, Vietnam',
       start: 'Nov 2023',
       end: 'May 2025',
@@ -84,6 +93,9 @@ export const profile: Profile = {
       role: 'Software Engineer',
       company: 'Rikkeisoft',
       project: 'AllianceBernstein',
+      description:
+        'Modernising a legacy financial application for a global asset manager: from VMs and SVN to Kubernetes and Git.',
+      teamSize: '6–10',
       location: 'Hanoi, Vietnam',
       start: 'Feb 2023',
       end: 'Sep 2024',
@@ -103,6 +115,9 @@ export const profile: Profile = {
       role: 'Software Engineer',
       company: 'Rikkeisoft',
       project: 'Welby',
+      description:
+        'A healthcare data backend rebuilt on the FHIR standard so medical records can be exchanged between systems.',
+      teamSize: '3–5',
       location: 'Hanoi, Vietnam',
       start: 'Feb 2023',
       end: 'Aug 2023',
@@ -121,6 +136,8 @@ export const profile: Profile = {
     {
       role: 'Software Engineer',
       company: 'Toshiba Software Development',
+      description: 'Toshiba’s document-recognition engine for digitising paper forms in enterprise workflows.',
+      teamSize: '6–10',
       location: 'Hanoi, Vietnam',
       start: 'May 2022',
       end: 'Feb 2023',
@@ -137,6 +154,8 @@ export const profile: Profile = {
     {
       role: 'Software Engineer',
       company: 'Toshiba Software Development',
+      description: 'A SCADA system for monitoring and controlling power-grid substations.',
+      teamSize: '3–5',
       location: 'Hanoi, Vietnam',
       start: 'Sep 2020',
       end: 'May 2022',
@@ -162,6 +181,14 @@ export const profile: Profile = {
   ],
 
   certificates: [
+    {
+      name: 'IELTS Academic',
+      short: 'Academic English',
+      issuer: 'British Council',
+      id: '26VN528368NGUN002A',
+      date: 'Aug 2026 – Aug 2028',
+      badge: '6.0',
+    },
     {
       name: 'AWS Certified Solutions Architect – Associate',
       short: 'Solutions Architect',

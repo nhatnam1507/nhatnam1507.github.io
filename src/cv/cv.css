@@ -287,6 +287,11 @@ a {
   color: var(--accent-2);
   margin-top: 1px;
 }
+.job-desc {
+  margin: 2px 0 0;
+  font-style: italic;
+  color: var(--ink-2);
+}
 
 .job ul {
   margin: 3px 0 4px;

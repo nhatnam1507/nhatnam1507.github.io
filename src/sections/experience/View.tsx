@@ -41,6 +41,7 @@ function RoleCard({ role, isHead }: { role: Role; isHead: boolean }) {
             {shortHash(role.role + role.company + (role.project || '') + role.startLabel)}
           </span>
           <span>{`${role.startLabel} → ${role.endLabel}`}</span>
+          {role.teamSize && <span>{`Team size: ${role.teamSize}`}</span>}
           {isHead && <span className="role-head">HEAD → main</span>}
         </div>
         <h3 className="role-title">{role.role}</h3>
@@ -48,6 +49,7 @@ function RoleCard({ role, isHead }: { role: Role; isHead: boolean }) {
           {`@ ${role.company}${role.project ? ' · ' : ''}`}
           {role.project && <b>{role.project}</b>}
         </div>
+        {role.description && <p className="role-desc">{role.description}</p>}
         <p className="role-hl">{role.highlight}</p>
         <div className="chips">
           {role.tags.map((tag, k) => (
